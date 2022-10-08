@@ -82,7 +82,7 @@ class LoginPage extends Component {
     },
   });
   
-  export default Cat;
+  export default LoginPage;
 
 
 
