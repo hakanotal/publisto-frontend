@@ -14,33 +14,27 @@ import {
 const LoginPage = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-    const tryLogin = async () =>{
-        try{
-            const response =  await fetch('https://fastapi-ituitis-otal18.cloud.okteto.net/user/signin', {
+    const tryLogin = async () => {
+        let response = await fetch(
+            'https://fastapi-ituitis-otal18.cloud.okteto.net/user/signin',
+            {
                 method: 'POST',
                 headers: {
-                  Accept: 'application/json',
-                  'Content-Type': 'application/json'
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                  "email": email,
-                  "password": password
-                })
-              });
-              
-              
-        console.log(response)
-        if(response.status == 200){
-            console.log("Successful login")
-        }
-        else{
-            console.log("Login Failed")
-        }
-        }
-        catch(e){
-            console.error(e)
-        }
-    }
+                    email: email,
+                    password: password,
+                }),
+            }
+        )
+            .then((response) => response.json())
+            .then((json) => console.log(json))
+            .catch((error) => console.error(error));
+
+        return response;
+    };
 
     return (
         <SafeAreaView>
