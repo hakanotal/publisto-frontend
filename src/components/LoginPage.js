@@ -14,11 +14,37 @@ import {
 const LoginPage = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const tryLogin = async () =>{
+        try{
+            const response =  await fetch('https://fastapi-ituitis-otal18.cloud.okteto.net/user/signin', {
+                method: 'POST',
+                headers: {
+                  Accept: 'application/json',
+                  'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                  "email": email,
+                  "password": password
+                })
+              });
+              
+              
+        console.log(response)
+        if(response.status == 200){
+            console.log("Successful login")
+        }
+        else{
+            console.log("Login Failed")
+        }
+        }
+        catch(e){
+            console.error(e)
+        }
+    }
+
     return (
         <SafeAreaView>
-
             <Image source={require('./cat.webp')} style= {styles.image}/>
-
             <SafeAreaView style={styles.container}>
 
                 <StatusBar style="auto" />
@@ -46,7 +72,7 @@ const LoginPage = () => {
                 
             </TouchableOpacity>
         
-            <TouchableOpacity style={styles.loginBtn}>
+            <TouchableOpacity style={styles.loginBtn} onPress ={tryLogin}>
                 <Text style={styles.loginText}>LOGIN</Text>
             </TouchableOpacity>
             </SafeAreaView>
