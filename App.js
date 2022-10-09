@@ -2,10 +2,10 @@ import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View } from 'react-native';
 import LoginPage from './src/components/LoginPage';
 export default function App() {
+  let userToken
   return (
    <View>
     <LoginPage/>
-
    </View>
   );
 }
