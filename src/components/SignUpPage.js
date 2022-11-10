@@ -13,18 +13,18 @@ import {
 } from "react-native";
 
 
-const LoginPage = ({ navigation }) => {
-    const isValidEmail = (email)  => {
+const SignUpPage = ({ navigation })=> {
+    function isValidEmail(email) {
         return /\S+@\S+\.\S+/.test(email);
       }
-
     const cloud_url = "https://eurmpfph3wu5w7rmksrgt46b5q0prnws.lambda-url.eu-central-1.on.aws"
+    const [name, setName] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-    const tryLogin = async () => {
-        if(isValidEmail(email)){
+    const trySignUp = async () => {
+        if (isValidEmail(email)){
             let response = await fetch(
-                cloud_url + '/api/v1/user/signin',
+                cloud_url + '/api/v1/user/signup',
                 {
                     method: 'POST',
                     headers: {
@@ -32,6 +32,7 @@ const LoginPage = ({ navigation }) => {
                         'Content-Type': 'application/json',
                     },
                     body: JSON.stringify({
+                        name: name,
                         email: email,
                         password: password,
                     }),
@@ -52,6 +53,13 @@ const LoginPage = ({ navigation }) => {
             <SafeAreaView style={styles.container}>
             <Image source={require('./Icon.png')} style= {styles.image}/>
                 <StatusBar style="auto" />
+                <Text style={styles.text}>Name</Text>   
+                <SafeAreaView style={styles.inputView}>
+                <TextInput
+                    style={styles.TextInput}
+                    onChangeText={(name) => setName(name)}
+                />
+                </SafeAreaView>
              <Text style={styles.text}>E-mail</Text>   
                 <SafeAreaView style={styles.inputView}>
                 <TextInput
@@ -68,8 +76,8 @@ const LoginPage = ({ navigation }) => {
                 />
             </SafeAreaView>
         
-            <TouchableOpacity style={styles.loginBtn} onPress ={tryLogin}>
-                <Text style={{color:"#FFFFFF"}}>Sign In</Text>
+            <TouchableOpacity style={styles.loginBtn} onPress ={trySignUp}>
+                <Text style={{color:"#FFFFFF"}}>Sign Up</Text>
             </TouchableOpacity>
 
             <TouchableOpacity style={styles.forgot_button}>
@@ -82,6 +90,7 @@ const LoginPage = ({ navigation }) => {
 
 const styles = StyleSheet.create({
  
+
     container: {
     flex: 1,
     backgroundColor : "",
@@ -91,17 +100,17 @@ const styles = StyleSheet.create({
     
     image: {
         alignContent: "center",
-        top:"15%",
         width : 300,
         height : 200,
+        top : "15%",
         left : "5%"
     },
 
     text: {
         top: "18.8%",
-        left:"3%",
+        left:"5%",
         fontSize: 15,
-        fontFamily: "Kantumruy-Regular",
+        fontFamily: "sans-serif",
         fontWeight: "bold",
         color: "#5D54A4",
         textAlign: "left",
@@ -153,5 +162,4 @@ const styles = StyleSheet.create({
 
     
 });
-  
-  export default LoginPage;
+  export default SignUpPage;
