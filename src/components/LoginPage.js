@@ -1,5 +1,6 @@
 import { StatusBar } from "expo-status-bar";
 import React, { useState, Component } from "react";
+
 import {
   StyleSheet,
   Text,
@@ -10,6 +11,7 @@ import {
   TouchableOpacity,
   SafeAreaView
 } from "react-native";
+
 
 const LoginPage = () => {
     const [email, setEmail] = useState("");
@@ -38,36 +40,31 @@ const LoginPage = () => {
 
     return (
         <SafeAreaView>
-            <Image source={require('./cat.webp')} style= {styles.image}/>
             <SafeAreaView style={styles.container}>
-
+            <Image source={require('./Icon.png')} style= {styles.image}/>
                 <StatusBar style="auto" />
+             <Text style={styles.text}>E-mail</Text>   
                 <SafeAreaView style={styles.inputView}>
                 <TextInput
                     style={styles.TextInput}
-                    placeholder="Email."
-                    placeholderTextColor="#003f5c"
                     onChangeText={(email) => setEmail(email)}
                 />
                 </SafeAreaView>
-        
+                <Text style={styles.text}>Password</Text>
             <SafeAreaView style={styles.inputView}>
                 <TextInput
                 style={styles.TextInput}
-                placeholder="Password."
-                placeholderTextColor="#003f5c"
                 secureTextEntry={true}
                 onChangeText={(password) => setPassword(password)}
                 />
             </SafeAreaView>
         
-            <TouchableOpacity>
-                <Text style={styles.forgot_button}>Forgot Password?</Text>
-                
-            </TouchableOpacity>
-        
             <TouchableOpacity style={styles.loginBtn} onPress ={tryLogin}>
-                <Text style={styles.loginText}>LOGIN</Text>
+                <Text style={{color:"#FFFFFF"}}>LOGIN</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity style={styles.forgot_button}>
+                <Text style={{color:"#7F7E7E"}} >Forgot Password?</Text>
             </TouchableOpacity>
             </SafeAreaView>
         </SafeAreaView>
@@ -76,36 +73,39 @@ const LoginPage = () => {
 
 
 const styles = StyleSheet.create({
-    image: {
-        alignContent: "center",
-        top : "50%",
-        left : 40,
-        width : 300,
-        height : 200
-    }
-    ,
+ 
 
     container: {
     flex: 1,
+    top: "15%",
     backgroundColor : "",
-    top : "90%",
-    width : "100%",
-    height : "80%",
     display : "flex",
-    alignContent : "center",
-    padding : 20,
     backgroundColor: "#fff",
-    alignItems: "center",
-    justifyContent: "center",
+    },
+    
+    image: {
+        alignContent: "center",
+        width : 300,
+        height : 200
+    },
+
+    text: {
+        top: "3.8%",
+        left:"3%",
+        fontSize: 15,
+        fontFamily: "Kantumruy-Regular",
+        fontWeight: "bold",
+        color: "#5D54A4",
+        textAlign: "left",
     },
 
     inputView: {
-    backgroundColor: "#FFC0CB",
+    backgroundColor: "#D9D9D9",
+    top: "5%",
     borderRadius: 30,
-    width: "70%",
+    width: "90%",
     height: 45,
     marginBottom: 20,
-
     alignItems: "center",
     },
 
@@ -116,24 +116,24 @@ const styles = StyleSheet.create({
     marginLeft: 20,
     },
 
-    forgot_button: {
-    height: 30,
-    marginBottom: 30,
+    loginBtn: {
+        width: "90%",
+        borderRadius: 25,
+        top: "7%",
+        height: 50,
+        alignItems: "center",
+        justifyContent: "center",
+        backgroundColor: "#5D54A4",
     },
 
-    loginBtn: {
-    width: "80%",
-    borderRadius: 25,
-    height: 50,
-    alignItems: "center",
-    justifyContent: "center",
-    marginTop: 40,
-    backgroundColor: "#FF1493",
-},
+    forgot_button: {
+        width: "90%",
+        top: "9%",
+        alignItems: "center",
+        justifyContent: "center",
+    }
+
+    
 });
   
   export default LoginPage;
-
-
-
-  

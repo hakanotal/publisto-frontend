@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "LoginLayout",
-    "slug": "LoginLayout",
+    "name": "swe-frontend",
+    "slug": "swe-frontend",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",

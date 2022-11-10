@@ -1,14 +1,18 @@
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View } from 'react-native';
 import LoginPage from './src/components/LoginPage';
+
 export default function App() {
-  let userToken
+  
+
   return (
-   <View>
-    <LoginPage/>
-   </View>
+    <View style={styles.container}>
+      <LoginPage />
+      <StatusBar style="auto" />
+    </View>
   );
 }
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
