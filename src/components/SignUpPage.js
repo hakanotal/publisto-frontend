@@ -39,7 +39,7 @@ const SignUpPage = ({ navigation })=> {
                 }
             )
                 .then((response) => response.json())
-                .then((json) => console.log(json))
+                .then((json) => {console.log(json); alert("User created successfully"); navigation.navigate("Signin")})
                 .catch((error) => console.error(error));
 
             return response;

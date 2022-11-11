@@ -1,6 +1,9 @@
 import { StatusBar } from "expo-status-bar";
 import React, { useState, Component } from "react";
 import { AsyncStorage } from 'react-native';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import ProfilePage from "./ProfilePage";
+import ListPage from "./ListPage";
 
 import {
   StyleSheet,
@@ -14,27 +17,20 @@ import {
 } from "react-native";
 
 
-const ProfilePage = ({ navigation }) => {
+const Tab = createBottomTabNavigator();
 
-    getToken = async () => {
-        try {
-            const value = await AsyncStorage.getItem('private_token');
-            if (value !== null) {
-            // We have data!!
-            console.log(value);
-            }
-        } catch (error) {
-          console.log(error);
-            // Error retrieving data
-        }
-    };
-    getToken();
-    return (
-            <SafeAreaView style={styles.container}>
-            <Text style={styles.text}>Profile Page</Text>
-            </SafeAreaView>
-        );
-    }
+
+const TabStack = ({ navigation }) => {
+
+   return (
+        <Tab.Navigator screenOptions={{ headerShown: false }}>
+            <Tab.Screen name="ProfilePage" component={ProfilePage} />
+            <Tab.Screen name="ListPage" component={ListPage} />
+        </Tab.Navigator>
+   
+    );
+
+}
 
 
 const styles = StyleSheet.create({
@@ -67,4 +63,4 @@ const styles = StyleSheet.create({
     
 });
   
-  export default ProfilePage;
+  export default TabStack;

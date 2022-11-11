@@ -64,7 +64,7 @@ const LoginPage = ({ navigation }) => {
                     {
                         //console.log(json.access_token)                            
                         storeToken(json.access_token)
-                        navigation.navigate('ProfilePage')
+                        navigation.navigate('TabStack')
                     })
                 .catch((error) => console.error(error));
         }

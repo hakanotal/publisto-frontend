@@ -14,7 +14,7 @@ import {
 } from "react-native";
 
 
-const ProfilePage = ({ navigation }) => {
+const ListPage = ({ navigation }) => {
 
     getToken = async () => {
         try {
@@ -22,16 +22,16 @@ const ProfilePage = ({ navigation }) => {
             if (value !== null) {
             // We have data!!
             console.log(value);
+            return value
             }
         } catch (error) {
           console.log(error);
             // Error retrieving data
         }
     };
-    getToken();
     return (
             <SafeAreaView style={styles.container}>
-            <Text style={styles.text}>Profile Page</Text>
+            <Text style={styles.text}>List Page</Text>
             </SafeAreaView>
         );
     }
@@ -44,15 +44,6 @@ const styles = StyleSheet.create({
     backgroundColor : "",
     display : "flex",
     backgroundColor: "#fff",
-    },
-    
-    profile_image: {
-        width: 200,
-        height: 200,
-        borderRadius: 100,
-        overflow: "hidden",
-        marginTop: 50,
-        marginLeft: 100
     },
     text: {
         top: "18.8%",
@@ -67,4 +58,4 @@ const styles = StyleSheet.create({
     
 });
   
-  export default ProfilePage;
+  export default ListPage;
