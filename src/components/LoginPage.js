@@ -1,6 +1,6 @@
 import { StatusBar } from "expo-status-bar";
 import React, { useState, Component } from "react";
-
+import {AsyncStorage} from 'react-native';
 import {
   StyleSheet,
   Text,
@@ -14,7 +14,26 @@ import {
 
 
 const LoginPage = ({ navigation }) => {
+
+
+    storeToken = async (token) => {
+        /*
+        *   Store the token in the local storage
+        */
+        try {
+        await AsyncStorage.setItem(
+            "private_token",
+            token,
+        );
+        } catch (error) {
+        console.log(error);
+        }
+    };
+
     const isValidEmail = (email)  => {
+        /*
+        *   Check if the email is valid
+        */
         return /\S+@\S+\.\S+/.test(email);
       }
 
@@ -22,6 +41,9 @@ const LoginPage = ({ navigation }) => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const tryLogin = async () => {
+        /*
+        *   Try to login with the given credentials
+        */
         if(isValidEmail(email)){
             let response = await fetch(
                 cloud_url + '/api/v1/user/signin',
@@ -38,10 +60,13 @@ const LoginPage = ({ navigation }) => {
                 }
             )
                 .then((response) => response.json())
-                .then((json) => console.log(json))
+                .then((json) => 
+                    {
+                        //console.log(json.access_token)                            
+                        storeToken(json.access_token)
+                        navigation.navigate('ProfilePage')
+                    })
                 .catch((error) => console.error(error));
-
-            return response;
         }
         else{
             alert("Please enter a valid email address")
@@ -107,7 +132,6 @@ const styles = StyleSheet.create({
         top: "18.8%",
         left:"3%",
         fontSize: 15,
-        fontFamily: "Kantumruy-Regular",
         fontWeight: "bold",
         color: "#5D54A4",
         textAlign: "left",
@@ -122,7 +146,6 @@ const styles = StyleSheet.create({
     width: "90%",
     height: 45,
     marginBottom: 20,
-    alignItems: "center",
     left : "5%"
 
     },
@@ -132,8 +155,6 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 10,
     marginLeft: 20,
-    left : "5%"
-
     },
 
     loginBtn: {

@@ -32,9 +32,9 @@ const SignUpPage = ({ navigation })=> {
                         'Content-Type': 'application/json',
                     },
                     body: JSON.stringify({
-                        name: name,
-                        email: email,
-                        password: password,
+                        "name": name,
+                        "email": email,
+                        "password": password,
                     }),
                 }
             )
@@ -119,16 +119,14 @@ const styles = StyleSheet.create({
     },
 
     inputView: {
-    backgroundColor: "#D9D9D9",
-    top: "20%",
-    borderRadius: 30,
-    width: "90%",
-    height: 45,
-    marginBottom: 20,
-    alignItems: "center",
-    left : "5%"
-
-    },
+        backgroundColor: "#D9D9D9",
+        top: "20%",
+        borderRadius: 30,
+        width: "90%",
+        height: 45,
+        marginBottom: 20,
+        left : "5%"
+        },
 
     TextInput: {
     height: 50,
