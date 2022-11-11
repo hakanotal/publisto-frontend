@@ -75,6 +75,12 @@ const LoginPage = ({ navigation }) => {
             <TouchableOpacity style={styles.forgot_button}>
                 <Text style={{color:"#7F7E7E"}} >Forgot Password?</Text>
             </TouchableOpacity>
+
+            <Text style={styles.text_signUp}>Don't have an account?</Text>
+            <TouchableOpacity style={styles.signupBtn} onPress={() => navigation.navigate('Signup')}>
+                <Text style={{color:"#FFFFFF"}}>Sign Up</Text>
+            </TouchableOpacity>
+
             </SafeAreaView>
         );
     }
@@ -148,9 +154,26 @@ const styles = StyleSheet.create({
         alignItems: "center",
         justifyContent: "center",
         left : "5%"
+    },
 
+
+    signupBtn: {
+        width: "80%",
+        borderRadius: 25,
+        top: "28%",
+        height: 50,
+        alignItems: "center",
+        justifyContent: "center",
+        backgroundColor: "#5D54A4",
+        left : "9%"
+    },
+    text_signUp: {
+        fontSize: 16,
+        fontWeight: "bold",
+        color: "#5D54A4",
+        top: "26%",
+        left: "5%",
     }
-
     
 });
   
