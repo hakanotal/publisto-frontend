@@ -1,6 +1,5 @@
 import { StatusBar } from "expo-status-bar";
 import React, { useState, Component } from "react";
-import { AsyncStorage } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import ProfilePage from "./ProfilePage";
 import ListPage from "./ListPage";

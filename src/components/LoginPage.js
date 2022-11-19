@@ -1,6 +1,6 @@
 import { StatusBar } from "expo-status-bar";
 import React, { useState, Component } from "react";
-import {AsyncStorage} from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import {
   StyleSheet,
   Text,
@@ -62,8 +62,8 @@ const LoginPage = ({ navigation }) => {
                 .then((response) => response.json())
                 .then((json) => 
                     {
-                        //console.log(json.access_token)                            
-                        storeToken(json.access_token)
+                        console.log("hfghgf: ", json)                            
+                        //storeToken(json.access_token)
                         navigation.navigate('TabStack')
                     })
                 .catch((error) => console.error(error));
