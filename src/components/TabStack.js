@@ -28,13 +28,14 @@ const TabStack = ({ navigation }) => {
         headerShown: false,
         tabBar: true,
         tabBarLabelStyle: {
+          fontFamily:"KantumruyProBold",
           fontSize: 12,
           color: "purple",
         },
       }}
     >
       <Tab.Screen
-        name="My Lists"
+        name="Lists"
         component={ListPage}
         options={{
           tabBarIcon: ({ color, size }) => (
@@ -43,7 +44,7 @@ const TabStack = ({ navigation }) => {
         }}
       />
       <Tab.Screen
-        name="Profile Page"
+        name="Profile"
         component={ProfilePage}
         options={{
           tabBarIcon: ({ color, size }) => (

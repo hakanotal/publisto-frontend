@@ -125,6 +125,7 @@ const styles = StyleSheet.create({
     backgroundColor: "",
     display: "flex",
     backgroundColor: "#fff",
+    fontFamily: "KantumruyPro"
   },
   colorPurple: {
     color: "#7F7E7E",

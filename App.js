@@ -5,10 +5,21 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import TabStack from "./src/components/TabStack";
 import ListPage from "./src/pages/ListPage";
 import { NativeBaseProvider, Box } from "native-base";
+import { useFonts } from 'expo-font';
+
 const Stack = createNativeStackNavigator();
 
 // /* cetini18 entered the */
 export default function App() {
+  const [fontsLoaded] = useFonts({
+      KantumruyPro: require('./assets/fonts/KantumruyPro-Regular.ttf'),
+      KantumruyProBold: require('./assets/fonts/KantumruyPro-Bold.ttf'),
+  });
+
+  if (!fontsLoaded) {
+      return null;
+  }
+
   return (
     <NativeBaseProvider>
       <NavigationContainer>

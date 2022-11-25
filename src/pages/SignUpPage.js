@@ -96,6 +96,7 @@ const styles = StyleSheet.create({
     backgroundColor: "",
     display: "flex",
     backgroundColor: "#fff",
+    fontFamily:"KantumruyPro",
   },
 
   image: {
