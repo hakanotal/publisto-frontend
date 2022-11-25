@@ -17,7 +17,7 @@ const SignUpPage = ({ navigation }) => {
     return /\S+@\S+\.\S+/.test(email);
   }
   const cloud_url =
-    "https://eurmpfph3wu5w7rmksrgt46b5q0prnws.lambda-url.eu-central-1.on.aws";
+    "https://e6waofnzq8.execute-api.eu-central-1.amazonaws.com/main";
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");

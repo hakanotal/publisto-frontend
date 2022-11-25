@@ -43,7 +43,7 @@ const TabStack = ({ navigation }) => {
         }}
       />
       <Tab.Screen
-        name="Profile Page"
+        name="Profile"
         component={ProfilePage}
         options={{
           tabBarIcon: ({ color, size }) => (

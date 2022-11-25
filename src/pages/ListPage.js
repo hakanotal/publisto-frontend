@@ -12,6 +12,9 @@ import {
   HStack,
   Button,
   Flex,
+  Modal,
+  FormControl,
+  Input,
 } from "native-base";
 const cloud_url =
   "https://e6waofnzq8.execute-api.eu-central-1.amazonaws.com/main";
@@ -20,6 +23,10 @@ const ListPage = ({ navigation }) => {
   const [privateData, setPrivateData] = useState([]);
   const [publicData, setPublicData] = useState([]);
   const [isLoading, setLoading] = useState(true);
+  // Show modal for private list
+  const [showModal, setShowModal] = useState(false);
+  const [showModal2, setShowModal2] = useState(false);
+  const [showModal3, setShowModal3] = useState(false);
   const getToken = async () => {
     try {
       const value = await AsyncStorage.getItem("private_token");
@@ -34,7 +41,6 @@ const ListPage = ({ navigation }) => {
   };
   const fetchData = async () => {
     const token = await getToken();
-    console.log(token);
     const resp = await fetch(cloud_url + "/api/v1/list/user", {
       method: "GET",
       headers: {
@@ -45,9 +51,11 @@ const ListPage = ({ navigation }) => {
     if (resp.status !== 200) {
       console.log("Error: " + resp.status);
     }
-    const data = await resp.json();
-    public_data = data.filter((item) => item.is_public === true);
-    private_data = data.filter((item) => item.is_public !== true);
+    let data = await resp.json();
+    let public_data = data.filter((item) => item.is_public === true);
+    console.log(public_data);
+    let private_data = data.filter((item) => item.is_public !== true);
+    console.log(private_data);
     setPrivateData(private_data);
     setPublicData(public_data);
     setLoading(false);
@@ -75,6 +83,12 @@ const ListPage = ({ navigation }) => {
   );
   return (
     <Box flex="1" safeAreaTop>
+      <Modal isOpen={showModal} onClose={() => setShowModal(false)} size="lg">
+        <Modal.Content maxW="300">
+          <Modal.Header>Private List</Modal.Header>
+          <Modal.Body></Modal.Body>
+        </Modal.Content>
+      </Modal>
       <Heading fontSize="3xl" px="8" pb="3" color="purple.900">
         My Lists
       </Heading>
@@ -87,8 +101,10 @@ const ListPage = ({ navigation }) => {
           size="xs"
           // w="24"
           // h="12"
-          colorScheme="purple"
-          onPress={() => console.log("hello world")}
+          colorScheme="blue"
+          onPress={() => {
+            setShowModal(true);
+          }}
           mb="3"
         >
           New Private List
@@ -105,14 +121,14 @@ const ListPage = ({ navigation }) => {
           ></FlatList>
         )}
       </Center>
-      <Flex direction="row" w="350">
+      {/* <Flex direction="row" w="350">
         <Heading fontSize="xl" px="8" pb="3" color="purple.800">
           Shared Lists
         </Heading>
         <Spacer />
         <Button
           size="xs"
-          colorScheme="purple"
+          colorScheme="blue"
           onPress={() => console.log("hello world")}
           mb="3"
         >
@@ -129,7 +145,7 @@ const ListPage = ({ navigation }) => {
             keyExtractor={(item) => item.id}
           ></FlatList>
         )}
-      </Center>
+      </Center> */}
     </Box>
   );
 };
