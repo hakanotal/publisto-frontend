@@ -1,4 +1,5 @@
 import { StatusBar } from "expo-status-bar";
+const { startListeningDb } = require('../api/dbListener');
 import React, { useState, Component, useEffect } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Text, FlatList } from "react-native";
@@ -62,6 +63,7 @@ const ListPage = ({ navigation }) => {
   };
   useEffect(() => {
     fetchData();
+    // startListeningDb(1);
   }, []);
   const renderList = ({ item }) => (
     <Box
