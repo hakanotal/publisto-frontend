@@ -1,0 +1,27 @@
+[
+    {
+      "name": "banana",
+      "amount": 2,
+      "bought_by": null
+    },
+    {
+      "name": "bread",
+      "amount": 31,
+      "bought_by": null
+    },
+    {
+      "name": "cheese",
+      "amount": 46,
+      "bought_by": null
+    },
+    {
+      "name": "water",
+      "amount": 100000,
+      "bought_by": null
+    },
+    {
+      "name": "chocolate",
+      "amount": 3,
+      "bought_by": null
+    } 
+  ]
