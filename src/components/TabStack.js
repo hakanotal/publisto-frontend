@@ -3,6 +3,7 @@ import React, { useState, Component } from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import ProfilePage from "../pages/ProfilePage";
 import ListPage from "../pages/ListPage";
+import PublicListPage from "../pages/PublicListPage";
 import { Button } from "native-base";
 import {
   Ionicons,
@@ -34,8 +35,17 @@ const TabStack = ({ navigation }) => {
       }}
     >
       <Tab.Screen
-        name="My Lists"
+        name="Private Lists"
         component={ListPage}
+        options={{
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="list-outline" size={24} color="purple" />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="Public Lists"
+        component={PublicListPage}
         options={{
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="list-outline" size={24} color="purple" />
