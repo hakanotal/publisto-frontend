@@ -1,3 +1,5 @@
+import { StatusBar } from "expo-status-bar";
+const { startListeningDb } = require("../api/dbListener");
 import React, { useState, Component, useEffect } from "react";
 import { Text, FlatList } from "react-native";
 import fetchLists from "../functions/fetchLists";
@@ -33,6 +35,8 @@ const ListPage = ({ navigation }) => {
       setPrivateData(privateData);
       setLoading(false);
     })();
+    fetchData();
+    // startListeningDb(1);
   }, []);
   const renderList = ({ item }) => (
     <Box

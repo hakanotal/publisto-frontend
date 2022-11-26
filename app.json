@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "swe-frontend",
-    "slug": "swe-frontend",
+    "name": "Publisto",
+    "slug": "Publisto",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",

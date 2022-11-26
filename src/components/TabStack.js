@@ -29,6 +29,7 @@ const TabStack = ({ navigation }) => {
         headerShown: false,
         tabBar: true,
         tabBarLabelStyle: {
+          fontFamily: "KantumruyProBold",
           fontSize: 12,
           color: "purple",
         },
