@@ -61,7 +61,7 @@ const ListPage = ({ navigation }) => {
       </Heading>
       <Flex direction="row" w="350">
         <Heading fontSize="xl" px="8" pb="3" color="purple.800">
-          Shared List
+          Shared Lists
         </Heading>
         <Spacer />
         <Button
