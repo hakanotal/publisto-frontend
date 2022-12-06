@@ -85,8 +85,8 @@ export default ProfilePage = ({ navigation }) => {
             height: 200,
             borderWidth: 1,
             borderColor: "red",
-            marginBottom: 60,
-            marginTop: 30,
+            marginBottom: 40,
+            marginTop: 20,
           }}
           source={{ uri: `data:image/png;base64,${image}` }}
         ></Image>
@@ -127,6 +127,7 @@ export default ProfilePage = ({ navigation }) => {
               //   const privateData = await fetchLists("private");
               //   setPrivateData(compare_func(privateData));
               // })();
+              setEditProfile(true);
               setShowModal(true);
               // First show pop-up for double password check
             }}

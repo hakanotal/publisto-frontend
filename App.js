@@ -26,11 +26,11 @@ export default function App() {
     <NativeBaseProvider>
       <NavigationContainer>
         <Stack.Navigator screenOptions={{ headerShown: false }}>
-          <Stack.Screen name="ProfilePage" component={ProfilePage} />
           <Stack.Screen name="Signin" component={LoginPage} />
           <Stack.Screen name="Signup" component={SignUpPage} />
           <Stack.Screen name="List" component={ListPage} />
           <Stack.Screen name="Lists" component={ListsPage} />
+          <Stack.Screen name="ProfilePage" component={ProfilePage} />
           <Stack.Screen name="TabStack" component={TabStack} />
         </Stack.Navigator>
       </NavigationContainer>
