@@ -2,7 +2,8 @@ import { StatusBar } from "expo-status-bar";
 import React, { useState, Component } from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import ProfilePage from "../pages/ProfilePage";
-import ListPage from "../pages/ListPage";
+import ListPage from "../components/ListPage";
+import ListsPage from "../pages/ListsPage";
 import PublicListPage from "../pages/PublicListPage";
 import { Button } from "native-base";
 import {
@@ -37,7 +38,7 @@ const TabStack = ({ navigation }) => {
     >
       <Tab.Screen
         name="Private Lists"
-        component={ListPage}
+        component={ListsPage}
         options={{
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="list-outline" size={24} color="purple" />

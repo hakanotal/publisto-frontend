@@ -67,7 +67,6 @@ const LoginPage = ({ navigation }) => {
           return response.json();
         })
         .then((json) => {
-          console.log(json);
           storeToken(json.access_token);
           navigation.navigate("TabStack");
         })
@@ -118,14 +117,13 @@ const LoginPage = ({ navigation }) => {
     </SafeAreaView>
   );
 };
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "",
     display: "flex",
     backgroundColor: "#fff",
-    fontFamily: "KantumruyPro"
+    fontFamily: "KantumruyPro",
   },
   colorPurple: {
     color: "#7F7E7E",
