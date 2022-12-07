@@ -11,7 +11,6 @@ import {
   Modal,
   Input,
   Text,
-  Text,
 } from "native-base";
 import {
   AntDesign,
