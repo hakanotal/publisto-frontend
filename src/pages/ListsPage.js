@@ -86,7 +86,7 @@ const ListsPage = ({ navigation }) => {
       </Heading>
       <Flex direction="row" w="350">
         <Heading fontSize="xl" px="8" pb="3" color="purple.800">
-          Private List
+          Private Lists
         </Heading>
         <Spacer />
         <Button
