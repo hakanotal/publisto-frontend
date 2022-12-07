@@ -2,7 +2,6 @@ import getToken from "./getToken";
 const cloud_url =
   "https://e6waofnzq8.execute-api.eu-central-1.amazonaws.com/main";
 export default fetchUserInfo = async (id) => {
-  console.log(id);
   const token = await getToken();
   const response = await fetch(cloud_url + "/api/v1/user/profile", {
     method: "POST",

@@ -10,8 +10,15 @@ import {
   Flex,
   Modal,
   Input,
+  Text,
 } from "native-base";
-
+import {
+  AntDesign,
+  Feather,
+  Ionicons,
+  MaterialIcons,
+  MaterialCommunityIcons,
+} from "@expo/vector-icons";
 import deleteList from "../functions/deleteList";
 import fetchUserInfo from "../functions/fetchUserInfo";
 let prev_name;
@@ -32,19 +39,15 @@ function ListPage({ route, navigation }) {
   const [itemAmount, setItemAmount] = useState("");
 
   const handleEdit = async (item) => {
-    console.log(item);
     /* If editmode is false assign item bought by, else show modal for user */
     if (editMode) {
-      console.log("hey");
       setItemName(item.name);
       prev_name = item.name; // use this to change the name of the item in db
-      console.log(prev_name);
       setItemAmount(item.amount);
       setShowModal(true);
     } else {
       // Get current user name and email
-      console.log("heya");
-      item.bought_by = "Yusuf Huseyingil";
+      item.bought_by = "Yusuf";
       setNotBought(listItems.filter((item) => item.bought_by == null));
       setPurchased(listItems.filter((item) => item.bought_by != null));
     }
@@ -69,13 +72,36 @@ function ListPage({ route, navigation }) {
           borderColor="muted.800"
           mb="5"
           w="330"
+          py="4"
+          bgColor="blueGray.600"
           onPress={handleEdit.bind(this, item)}
         >
-          <Button colorScheme="blueGray" py="4">
-            {item.name}
-            {item.bought_by}
-            {item.amount}
-          </Button>
+          <Flex
+            direction="row"
+            w="full"
+            justifyContent="space-evenly"
+            alignItems="center"
+          >
+            <Text color="white" fontSize="lg">
+              {item.name}
+            </Text>
+            <Box>
+              <Flex direction="row">
+                <Button
+                  colorScheme="blueGray"
+                  onPress={handleEdit.bind(this, item)}
+                >
+                  <AntDesign name="caretup" size={28} color="white" />
+                </Button>
+                <Button
+                  colorScheme="blueGray"
+                  onPress={handleEdit.bind(this, item)}
+                >
+                  <Feather name="trash" size={28} color="white" />
+                </Button>
+              </Flex>
+            </Box>
+          </Flex>
         </Box>
       );
     } else {
@@ -86,9 +112,14 @@ function ListPage({ route, navigation }) {
             py="4"
             onPress={handleEdit.bind(this, item)}
           >
-            {item.name}
-            {item.bought_by}
-            {item.amount}
+            <Flex direction="row" w="full" justifyContent="space-evenly">
+              <Text color="white" fontSize="lg">
+                {item.name}
+              </Text>
+              <Text color="white" fontSize="lg">
+                {item.amount}
+              </Text>
+            </Flex>
           </Button>
         </Box>
       );
@@ -222,7 +253,7 @@ function ListPage({ route, navigation }) {
           marginTop="4"
           marginBottom="2"
         >
-          Return to my lists
+          Save Changes and Return
         </Button>
         <Button onPress={handleListDelete} colorScheme="danger" h="12" w="300">
           Delete List

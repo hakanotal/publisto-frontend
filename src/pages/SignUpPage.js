@@ -37,7 +37,6 @@ const SignUpPage = ({ navigation }) => {
       })
         .then((response) => response.json())
         .then((json) => {
-          console.log(json);
           alert("User created successfully");
           navigation.navigate("Signin");
         })
@@ -96,7 +95,7 @@ const styles = StyleSheet.create({
     backgroundColor: "",
     display: "flex",
     backgroundColor: "#fff",
-    fontFamily:"KantumruyPro",
+    fontFamily: "KantumruyPro",
   },
 
   image: {

@@ -57,7 +57,6 @@ const updateUser = async (user_name, email, password) => {
   if (response.status !== 204 && response.status !== 200) {
     console.log("Error: " + response.status);
   }
-  console.log(response);
 };
 
 export default ProfilePage = ({ navigation }) => {

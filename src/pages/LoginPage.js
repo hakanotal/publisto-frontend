@@ -58,7 +58,6 @@ const LoginPage = ({ navigation }) => {
         }),
       })
         .then((response) => {
-          console.log(JSON.stringify(response));
           if (response.status !== 200) {
             throw Error(
               "No account found with the given credentials. Try again!"

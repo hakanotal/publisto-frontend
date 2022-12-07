@@ -3,7 +3,6 @@ const cloud_url =
   "https://e6waofnzq8.execute-api.eu-central-1.amazonaws.com/main";
 export default createList = async (list_name) => {
   const token = await getToken();
-  console.log(list_name);
   const response = await fetch(cloud_url + "/api/v1/list/create", {
     method: "POST",
     headers: {
