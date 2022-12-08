@@ -1,5 +1,5 @@
 import { StatusBar } from "expo-status-bar";
-import React, { useState, Component } from "react";
+import React, { useState, useRef, Component } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import {
   StyleSheet,
@@ -9,15 +9,12 @@ import {
   TouchableOpacity,
   SafeAreaView,
 } from "react-native";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+
 import validator from "validator";
-// We should document our code.
-/**
- * Insert text at cursor position.
- *
- * @param {string} text
- * @public
- */
 const LoginPage = ({ navigation }) => {
+  const ref_input2 = useRef();
+  const ref_login = useRef();
   const storeToken = async (token) => {
     /*
      *   Store the token in the local storage
@@ -42,11 +39,12 @@ const LoginPage = ({ navigation }) => {
   /**
    * FUNCTION
    * Try to login with the given credentials
+   * Hand-made validation is replaced with validator.isEmail() from popular validator library
    */
 
   const tryLogin = async () => {
     if (validator.isEmail(email)) {
-      await fetch(cloud_url + "/api/v1/user/signin", {
+      const response = await fetch(cloud_url + "/api/v1/user/signin", {
         method: "POST",
         headers: {
           Accept: "application/json",
@@ -56,20 +54,13 @@ const LoginPage = ({ navigation }) => {
           email: email,
           password: password,
         }),
-      })
-        .then((response) => {
-          if (response.status !== 200) {
-            throw Error(
-              "No account found with the given credentials. Try again!"
-            );
-          }
-          return response.json();
-        })
-        .then((json) => {
-          storeToken(json.access_token);
-          navigation.navigate("TabStack");
-        })
-        .catch((error) => console.error(error));
+      });
+      if (response.status !== 200)
+        throw Error("No account found with the given credentials. Try again!");
+
+      const responseJSON = await response.json();
+      storeToken(responseJSON.access_token);
+      navigation.navigate("TabStack");
     } else {
       alert("You have entered invalid email. Try again!");
     }
@@ -77,42 +68,51 @@ const LoginPage = ({ navigation }) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <Image
-        source={require("../../assets/images/icon.png")}
-        style={styles.image}
-      />
-      <StatusBar style="auto" />
-      <Text style={styles.text}>E-mail</Text>
-      <SafeAreaView style={styles.inputView}>
-        <TextInput
-          style={styles.TextInput}
-          onChangeText={(email) => setEmail(email)}
+      <KeyboardAwareScrollView>
+        <Image
+          source={require("../../assets/images/icon.png")}
+          style={styles.image}
         />
-      </SafeAreaView>
-      <Text style={styles.text}>Password</Text>
-      <SafeAreaView style={styles.inputView}>
-        <TextInput
-          style={styles.TextInput}
-          secureTextEntry={true}
-          onChangeText={(password) => setPassword(password)}
-        />
-      </SafeAreaView>
 
-      <TouchableOpacity style={styles.loginBtn} onPress={tryLogin}>
-        <Text style={[styles.whiteText]}>Sign In</Text>
-      </TouchableOpacity>
+        <StatusBar style="auto" />
+        <Text style={styles.text}>E-mail</Text>
+        <SafeAreaView style={styles.inputView}>
+          <TextInput
+            style={styles.TextInput}
+            onChangeText={(email) => setEmail(email)}
+            onSubmitEditing={() => ref_input2.current.focus()}
+          />
+        </SafeAreaView>
 
-      <TouchableOpacity style={styles.forgot_button}>
-        <Text style={[styles.colorPurple, styles.mt]}>Forgot Password?</Text>
-      </TouchableOpacity>
-      <TouchableOpacity
-        style={styles.forgot_button}
-        onPress={() => navigation.navigate("Signup")}
-      >
-        <Text style={[styles.colorPurple, styles.mt]}>
-          Don't have an account?
-        </Text>
-      </TouchableOpacity>
+        <Text style={styles.text}>Password</Text>
+        <SafeAreaView style={styles.inputView}>
+          <TextInput
+            style={styles.TextInput}
+            secureTextEntry={true}
+            onChangeText={(password) => setPassword(password)}
+            ref={ref_input2}
+            onSubmitEditing={tryLogin}
+          />
+        </SafeAreaView>
+        <TouchableOpacity
+          style={styles.loginBtn}
+          onPress={tryLogin}
+          ref={ref_login}
+        >
+          <Text style={[styles.whiteText]}>Sign In</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.forgot_button}>
+          <Text style={[styles.colorPurple, styles.mt]}>Forgot Password?</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.forgot_button}
+          onPress={() => navigation.navigate("Signup")}
+        >
+          <Text style={[styles.colorPurple, styles.mt]}>
+            Don't have an account?
+          </Text>
+        </TouchableOpacity>
+      </KeyboardAwareScrollView>
     </SafeAreaView>
   );
 };

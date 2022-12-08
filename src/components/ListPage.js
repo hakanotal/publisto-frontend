@@ -12,13 +12,7 @@ import {
   Input,
   Text,
 } from "native-base";
-import {
-  AntDesign,
-  Feather,
-  Ionicons,
-  MaterialIcons,
-  MaterialCommunityIcons,
-} from "@expo/vector-icons";
+import { AntDesign, Feather } from "@expo/vector-icons";
 import deleteList from "../functions/deleteList";
 import fetchUserInfo from "../functions/fetchUserInfo";
 let prev_name;
@@ -69,11 +63,11 @@ function ListPage({ route, navigation }) {
         <Box
           bg="muted.300"
           rounded="lg"
-          borderColor="muted.800"
+          borderColor="gray.100"
           mb="5"
           w="330"
           py="4"
-          bgColor="blueGray.600"
+          bgColor="purple.900"
           onPress={handleEdit.bind(this, item)}
         >
           <Flex
@@ -87,16 +81,10 @@ function ListPage({ route, navigation }) {
             </Text>
             <Box>
               <Flex direction="row">
-                <Button
-                  colorScheme="blueGray"
-                  onPress={handleEdit.bind(this, item)}
-                >
+                <Button onPress={handleEdit.bind(this, item)} variant="ghost">
                   <AntDesign name="caretup" size={28} color="white" />
                 </Button>
-                <Button
-                  colorScheme="blueGray"
-                  onPress={handleEdit.bind(this, item)}
-                >
+                <Button onPress={handleEdit.bind(this, item)} variant="ghost">
                   <Feather name="trash" size={28} color="white" />
                 </Button>
               </Flex>
