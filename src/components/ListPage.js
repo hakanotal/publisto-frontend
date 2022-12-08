@@ -1,5 +1,5 @@
 // const { startListeningDb } = require("../api/dbListener");
-import { SectionList } from "react-native";
+import { SectionList, TouchableOpacity, View } from "react-native";
 import { useState } from "react";
 import {
   Box,
@@ -14,7 +14,6 @@ import {
 } from "native-base";
 import { AntDesign, Feather } from "@expo/vector-icons";
 import deleteList from "../functions/deleteList";
-import fetchUserInfo from "../functions/fetchUserInfo";
 let prev_name;
 function ListPage({ route, navigation }) {
   const [showModal, setShowModal] = useState(false);
@@ -46,6 +45,9 @@ function ListPage({ route, navigation }) {
       setPurchased(listItems.filter((item) => item.bought_by != null));
     }
   };
+  const longClick = () => {
+    console.log("long Click");
+  };
   const [purchased, setPurchased] = useState(
     listItems.filter((item) => item.bought_by != null)
   );
@@ -61,12 +63,11 @@ function ListPage({ route, navigation }) {
     if (item.bought_by != null) {
       return (
         <Box
-          bg="muted.300"
-          rounded="lg"
-          borderColor="gray.100"
-          mb="5"
+          rounded="full"
+          borderColor="gray.800"
+          mb="3"
           w="330"
-          py="4"
+          py="3"
           bgColor="purple.900"
           onPress={handleEdit.bind(this, item)}
         >
@@ -80,7 +81,10 @@ function ListPage({ route, navigation }) {
               {item.name}
             </Text>
             <Box>
-              <Flex direction="row">
+              <Flex direction="row" alignItems="center">
+                <Text color="white" fontSize="sm">
+                  {item.bought_by}
+                </Text>
                 <Button onPress={handleEdit.bind(this, item)} variant="ghost">
                   <AntDesign name="caretup" size={28} color="white" />
                 </Button>
@@ -94,21 +98,39 @@ function ListPage({ route, navigation }) {
       );
     } else {
       return (
-        <Box bg="muted.300" rounded="lg" borderColor="muted.800" mb="5" w="330">
-          <Button
-            colorScheme="orange"
-            py="4"
-            onPress={handleEdit.bind(this, item)}
+        <Box
+          rounded="full"
+          mb="3"
+          w="360"
+          py="3"
+          bgColor="gray.500"
+          onPress={handleEdit.bind(this, item)}
+        >
+          <Button onLongPress={longClick} variant="ghost"></Button>
+          {/* <Flex
+            direction="row"
+            w="full"
+            justifyContent="space-evenly"
+            alignItems="center"
           >
-            <Flex direction="row" w="full" justifyContent="space-evenly">
-              <Text color="white" fontSize="lg">
-                {item.name}
-              </Text>
-              <Text color="white" fontSize="lg">
-                {item.amount}
-              </Text>
-            </Flex>
-          </Button>
+            <Text color="white" fontSize="lg">
+              {item.name}
+            </Text>
+            <Box>
+              <Flex direction="row">
+                <Button
+                  onPress={handleEdit.bind(this, item)}
+                  variant="ghost"
+                  onLongPress={longClick}
+                >
+                  <AntDesign name="caretup" size={28} color="white" />
+                </Button>
+                <Button onPress={handleEdit.bind(this, item)} variant="ghost">
+                  <Feather name="trash" size={28} color="white" />
+                </Button>
+              </Flex>
+            </Box>
+          </Flex> */}
         </Box>
       );
     }
@@ -221,15 +243,6 @@ function ListPage({ route, navigation }) {
                 {section.title}
               </Heading>
               <Spacer />
-              {section.title == "To Be Purchased" ? (
-                <Button size="xs" colorScheme="blue" onPress={addItem} mb="3">
-                  Add Item
-                </Button>
-              ) : (
-                <Button size="xs" colorScheme="blue" onPress={() => {}} mb="3">
-                  Surprise Me
-                </Button>
-              )}
             </Flex>
           )}
           keyExtractor={(item, index) => `basicListEntry-${item.name}`}

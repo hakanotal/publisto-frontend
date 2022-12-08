@@ -8,6 +8,8 @@ import {
   TextInput,
   TouchableOpacity,
   SafeAreaView,
+  TouchableHighlight,
+  View,
 } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 
@@ -65,7 +67,6 @@ const LoginPage = ({ navigation }) => {
       alert("You have entered invalid email. Try again!");
     }
   };
-
   return (
     <SafeAreaView style={styles.container}>
       <KeyboardAwareScrollView>

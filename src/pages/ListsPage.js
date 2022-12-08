@@ -34,10 +34,20 @@ const ListsPage = ({ navigation }) => {
   }, [isFocused, privateData]);
 
   const renderList = ({ item }) => (
-    <Box bg="muted.300" rounded="lg" borderColor="muted.800" mb="5" w="330">
+    <Box
+      bg="muted.300"
+      rounded="full"
+      borderColor="muted.800"
+      fontSize="lg"
+      mb="5"
+      w="330"
+      color="purple.900"
+    >
       <Button
         colorScheme="blueGray"
-        py="4"
+        py="5"
+        variant="ghost"
+        _text={{ fontSize: "xl", color: "purple.900", fontWeight: "bold" }}
         onPress={() => {
           navigation.push("List", {
             listName: item.name,
