@@ -12,13 +12,7 @@ export default createList = async (list_name, items) => {
       is_public: false,
       name: list_name,
       is_active: true,
-      items: [
-        {
-          name: "apple",
-          amount: 1,
-          bought_by: null,
-        },
-      ],
+      items: [],
     }),
   });
   if (response.status !== 200) {

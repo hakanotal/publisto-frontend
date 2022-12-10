@@ -36,7 +36,7 @@ export default function App() {
     <NativeBaseProvider>
       <NavigationContainer>
         <Stack.Navigator
-          // initialRouteName={auth ? "TabStack" : "Signin"}
+          initialRouteName={auth ? "TabStack" : "Signin"}
           screenOptions={{ headerShown: false }}
         >
           <Stack.Screen name="Signin" component={LoginPage} />
