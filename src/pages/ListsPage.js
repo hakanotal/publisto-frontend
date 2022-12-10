@@ -69,24 +69,32 @@ const ListsPage = ({ navigation }) => {
   return (
     <Box flex="1" safeAreaTop>
       <Modal isOpen={showModal} onClose={() => setShowModal(false)} size="lg">
-        <Modal.Content maxWidth="350" bg="indigo.900" h="56">
-          <Modal.Header bg="indigo.900">Enter List Name</Modal.Header>
-          <Modal.Body bg="indigo.900">
+        <Modal.Content maxWidth="350" bg="indigo.800" h="56" rounded="2xl">
+          <Modal.Header
+            bg="indigo.800"
+            _text={{ color: "white", textAlign: "center" }}
+          >
+            Enter List Name
+          </Modal.Header>
+          <Modal.Body bg="indigo.800">
             <Input
-              variant="rounded"
+              variant="outline"
               placeholder="New List..."
+              color="white"
               onChangeText={(listName) => setListName(listName)}
             />
           </Modal.Body>
-          <Modal.Footer bg="indigo.900">
+          <Modal.Footer bg="indigo.800">
             <Button
               flex="1"
+              colorScheme="fuchsia"
               onPress={() => {
                 console.log(listName);
                 createList(listName);
                 (async function () {
                   const privateData = await fetchLists("private");
-                  setPrivateData(compare_func(privateData));
+                  const sortedData = await compare_func(privateData);
+                  setPrivateData(sortedData);
                 })();
                 setShowModal(false);
               }}

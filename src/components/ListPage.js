@@ -96,10 +96,10 @@ function ListPage({ route, navigation }) {
     ];
     setUpdatedItems(my_items);
   };
-  const handleEdit = async (item) => {
+  const handleEdit = (item) => {
+    setItemAmount(item.amount.toString());
     setItemName(item.name);
     setItemToChange(item.name);
-    setItemAmount(item.amount);
     setShowModal(true);
   };
   const handleBuy = async (item) => {
@@ -140,9 +140,10 @@ function ListPage({ route, navigation }) {
     if (item.bought_by != null) {
       return (
         <Box
-          rounded="full"
+          rounded="2xl"
           mb="3"
-          w="80"
+          ml="3"
+          w="72"
           py="3"
           bgColor="purple.900"
           onPress={handleEdit.bind(this, item)}
@@ -154,12 +155,12 @@ function ListPage({ route, navigation }) {
             alignItems="center"
           >
             <Text color="white" fontSize="lg">
-              {item.name} {item.amount}
+              {item.name}
             </Text>
             <Box>
               <Flex direction="row" alignItems="center">
                 <Text color="white" fontSize="sm">
-                  {item.bought_by}
+                  {capitalizeFirstLetter(item.bought_by)}
                 </Text>
                 <Button onPress={moveUp.bind(this, item)} variant="ghost">
                   <AntDesign name="caretup" size={28} color="white" />
@@ -180,7 +181,7 @@ function ListPage({ route, navigation }) {
           justifyContent="space-evenly"
           alignItems="center"
         >
-          <Box rounded="lg" mb="3" w="72" py="3" bgColor="gray.300">
+          <Box rounded="2xl" mb="3" w="72" py="3" bgColor="gray.300">
             <Button variant="ghost" onLongPress={handleBuy.bind(this, item)}>
               <Flex
                 direction="row"
@@ -315,6 +316,7 @@ function ListPage({ route, navigation }) {
         />
         <Button
           onPress={handleReturn}
+          colorScheme="purple"
           h="12"
           w="72"
           marginTop="4"

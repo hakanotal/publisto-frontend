@@ -39,9 +39,9 @@ export default function App() {
           // initialRouteName={auth ? "TabStack" : "Signin"}
           screenOptions={{ headerShown: false }}
         >
-          <Stack.Screen name="Lists" component={ListsPage} />
           <Stack.Screen name="Signin" component={LoginPage} />
           <Stack.Screen name="Signup" component={SignUpPage} />
+          <Stack.Screen name="Lists" component={ListsPage} />
           <Stack.Screen name="List" component={ListPage} />
           <Stack.Screen name="ProfilePage" component={ProfilePage} />
           <Stack.Screen name="TabStack" component={TabStack} />
