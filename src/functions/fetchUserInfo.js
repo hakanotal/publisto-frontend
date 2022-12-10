@@ -1,17 +1,13 @@
 import getToken from "./getToken";
-const cloud_url =
-  "https://e6waofnzq8.execute-api.eu-central-1.amazonaws.com/main";
+import apiUrl from "../constants/apiUrl";
 export default fetchUserInfo = async (id) => {
   const token = await getToken();
-  const response = await fetch(cloud_url + "/api/v1/user/profile", {
-    method: "POST",
+  const response = await fetch(apiUrl + "/api/v1/user/profile/" + id, {
+    method: "GET",
     headers: {
       Authorization: "Bearer " + token,
-      "Content-Type": "application/json",
+      Accept: "application/json",
     },
-    body: JSON.stringify({
-      id: id,
-    }),
   });
   if (response.status !== 200) {
     console.log("Error: " + response.status);

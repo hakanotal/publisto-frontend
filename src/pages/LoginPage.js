@@ -11,6 +11,7 @@ import {
   TouchableHighlight,
   View,
 } from "react-native";
+import apiUrl from "../constants/apiUrl";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 
 import validator from "validator";
@@ -28,9 +29,6 @@ const LoginPage = ({ navigation }) => {
     }
   };
 
-  const cloud_url =
-    "https://e6waofnzq8.execute-api.eu-central-1.amazonaws.com/main";
-
   // OLD URL
   // const cloud_url =
   //   "https://eurmpfph3wu5w7rmksrgt46b5q0prnws.lambda-url.eu-central-1.on.aws";
@@ -46,7 +44,7 @@ const LoginPage = ({ navigation }) => {
 
   const tryLogin = async () => {
     if (validator.isEmail(email)) {
-      const response = await fetch(cloud_url + "/api/v1/user/signin", {
+      const response = await fetch(apiUrl + "/api/v1/user/signin", {
         method: "POST",
         headers: {
           Accept: "application/json",

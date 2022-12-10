@@ -11,19 +11,17 @@ import {
   TouchableOpacity,
   SafeAreaView,
 } from "react-native";
-
+import apiUrl from "../constants/apiUrl";
 const SignUpPage = ({ navigation }) => {
   function isValidEmail(email) {
     return /\S+@\S+\.\S+/.test(email);
   }
-  const cloud_url =
-    "https://e6waofnzq8.execute-api.eu-central-1.amazonaws.com/main";
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const trySignUp = async () => {
     if (isValidEmail(email)) {
-      let response = await fetch(cloud_url + "/api/v1/user/signup", {
+      let response = await fetch(apiUrl + "/api/v1/user/signup", {
         method: "POST",
         headers: {
           Accept: "application/json",

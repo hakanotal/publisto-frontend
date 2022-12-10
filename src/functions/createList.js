@@ -1,9 +1,8 @@
 import getToken from "./getToken";
-const cloud_url =
-  "https://e6waofnzq8.execute-api.eu-central-1.amazonaws.com/main";
+import apiUrl from "../constants/apiUrl";
 export default createList = async (list_name) => {
   const token = await getToken();
-  const response = await fetch(cloud_url + "/api/v1/list/create", {
+  const response = await fetch(apiUrl + "/api/v1/list/create", {
     method: "POST",
     headers: {
       Authorization: "Bearer " + token,
@@ -13,18 +12,6 @@ export default createList = async (list_name) => {
       is_public: false,
       name: list_name,
       is_active: true,
-      items: [
-        {
-          name: "apple",
-          amount: 1,
-          bought_by: null,
-        },
-        {
-          name: "bread",
-          amount: 3,
-          bought_by: null,
-        },
-      ],
     }),
   });
   if (response.status !== 200) {

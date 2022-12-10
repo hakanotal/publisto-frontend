@@ -1,9 +1,8 @@
 import getToken from "./getToken";
-const cloud_url =
-  "https://e6waofnzq8.execute-api.eu-central-1.amazonaws.com/main";
-export default fetchUserInfo = async (id) => {
+import apiUrl from "../constants/apiUrl";
+export default deleteList = async (id) => {
   const token = await getToken();
-  const response = await fetch(cloud_url + "/api/v1/list/delete", {
+  const response = await fetch(apiUrl + "/api/v1/list/delete", {
     method: "DELETE",
     headers: {
       Authorization: "Bearer " + token,

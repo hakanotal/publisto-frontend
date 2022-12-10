@@ -14,6 +14,7 @@ import {
 } from "native-base";
 import { AntDesign, Feather } from "@expo/vector-icons";
 import deleteList from "../functions/deleteList";
+import fetchUserInfo from "../functions/fetchUserInfo";
 let prev_name;
 function ListPage({ route, navigation }) {
   const [showModal, setShowModal] = useState(false);
@@ -45,8 +46,11 @@ function ListPage({ route, navigation }) {
       setPurchased(listItems.filter((item) => item.bought_by != null));
     }
   };
-  const longClick = () => {
-    console.log("long Click");
+  const handleBuy = async (item) => {
+    const user_data = await fetchUserInfo(listUser);
+    item.bought_by = user_data.name;
+    setNotBought(listItems.filter((item) => item.bought_by == null));
+    setPurchased(listItems.filter((item) => item.bought_by != null));
   };
   const [purchased, setPurchased] = useState(
     listItems.filter((item) => item.bought_by != null)
@@ -106,7 +110,9 @@ function ListPage({ route, navigation }) {
           bgColor="gray.500"
           onPress={handleEdit.bind(this, item)}
         >
-          <Button onLongPress={longClick} variant="ghost"></Button>
+          <Button onLongPress={handleBuy.bind(this, item)} variant="ghost">
+            {item.name}
+          </Button>
           {/* <Flex
             direction="row"
             w="full"
@@ -158,11 +164,6 @@ function ListPage({ route, navigation }) {
             <Button
               flex="1"
               onPress={() => {
-                // createList(listName);
-                // (async function () {
-                //   const privateData = await fetchLists("private");
-                //   console.log(privateData);
-                // })();
                 if (!editMode) {
                   setNotBought([
                     ...notBought,
@@ -212,6 +213,7 @@ function ListPage({ route, navigation }) {
           }}
           mb="3"
         >
+          {/* Share screen should pop up */}
           Share your list
         </Button>
         <Button
@@ -225,7 +227,7 @@ function ListPage({ route, navigation }) {
           Edit list
         </Button>
       </Flex>
-
+      {/* Add Item Section Here */}
       <Center>
         <SectionList
           contentContainerStyle={{ paddingBottom: 30 }}
