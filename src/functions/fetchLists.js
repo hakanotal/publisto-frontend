@@ -1,5 +1,5 @@
 import getToken from "./getToken";
-import apiUrl from "../constants/apiUrl";
+import apiUrl from "../constants/apiURL";
 export default fetchLists = async (visibility, setData, setLoading) => {
   const token = await getToken();
   const response = await fetch(apiUrl + "/api/v1/list/" + visibility, {

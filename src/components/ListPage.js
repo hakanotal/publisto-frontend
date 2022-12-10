@@ -11,56 +11,73 @@ import {
   Modal,
   Input,
   Text,
+  FormControl,
 } from "native-base";
-import { AntDesign, Feather } from "@expo/vector-icons";
+import { AntDesign, Feather, Ionicons } from "@expo/vector-icons";
 import deleteList from "../functions/deleteList";
 import fetchUserInfo from "../functions/fetchUserInfo";
+import { color } from "@mui/system";
 let prev_name;
 function ListPage({ route, navigation }) {
   const [showModal, setShowModal] = useState(false);
+  const [addItemName, setAddItemName] = useState("");
+  const [addItemAmount, setAddItemAmount] = useState("");
+  const [itemName, setItemName] = useState("");
+  const [itemAmount, setItemAmount] = useState("");
+
   const capitalizeFirstLetter = (string) => {
     return string.charAt(0).toUpperCase() + string.slice(1);
   };
   const { listId, listItems, listName, listUpdatedAt, listUser } = route.params;
-  listItems.forEach((item) => {
+  const [updatedItems, setUpdatedItems] = useState(listItems);
+  updatedItems.forEach((item) => {
     item.name = capitalizeFirstLetter(item.name);
   });
   const handleListDelete = async () => {
     await deleteList(listId);
     navigation.navigate("Lists");
   };
-  const [itemName, setItemName] = useState("");
-  const [itemAmount, setItemAmount] = useState("");
 
   const handleEdit = async (item) => {
-    /* If editmode is false assign item bought by, else show modal for user */
-    if (editMode) {
-      setItemName(item.name);
-      prev_name = item.name; // use this to change the name of the item in db
-      setItemAmount(item.amount);
-      setShowModal(true);
-    } else {
-      // Get current user name and email
-      item.bought_by = "Yusuf";
-      setNotBought(listItems.filter((item) => item.bought_by == null));
-      setPurchased(listItems.filter((item) => item.bought_by != null));
-    }
+    setItemName(item.name);
+    setItemAmount(item.amount);
+    prev_name = item.name; // use this to change the name of the item in db
+    setShowModal(true);
   };
   const handleBuy = async (item) => {
-    const user_data = await fetchUserInfo(listUser);
-    item.bought_by = user_data.name;
-    setNotBought(listItems.filter((item) => item.bought_by == null));
-    setPurchased(listItems.filter((item) => item.bought_by != null));
+    item.bought_by = "Hakan";
+    setUpdatedItems((prevState) => [...prevState, item]);
+    console.log(updatedItems);
+    setNotBought(updatedItems.filter((item) => item.bought_by == null));
+    setPurchased(updatedItems.filter((item) => item.bought_by != null));
   };
   const [purchased, setPurchased] = useState(
-    listItems.filter((item) => item.bought_by != null)
+    updatedItems.filter((item) => item.bought_by != null)
   );
   const [notBought, setNotBought] = useState(
-    listItems.filter((item) => item.bought_by == null)
+    updatedItems.filter((item) => item.bought_by == null)
   );
-  const addItem = () => {
-    setEditMode(false);
-    setShowModal(true);
+  const handleAddItem = () => {
+    if (notBought.some((e) => e.name === addItemName)) {
+      setAddItemAmount("");
+      setAddItemName("");
+      return;
+    }
+    if (addItemName == "" || addItemAmount == "") {
+      console.log("empty item");
+      return;
+    }
+    setUpdatedItems(
+      (prevState) => [
+        ...prevState,
+        { name: addItemName, amount: addItemAmount, bought_by: null },
+      ],
+      setNotBought(updatedItems.filter((item) => item.bought_by == null))
+    );
+    setPurchased(updatedItems.filter((item) => item.bought_by != null));
+    setNotBought(updatedItems.filter((item) => item.bought_by == null));
+    setAddItemAmount("");
+    setAddItemName("");
   };
   const [editMode, setEditMode] = useState(false);
   const renderListItem = (item) => {
@@ -68,7 +85,7 @@ function ListPage({ route, navigation }) {
       return (
         <Box
           rounded="full"
-          borderColor="gray.800"
+          borderColor="gray.300"
           mb="3"
           w="330"
           py="3"
@@ -82,7 +99,7 @@ function ListPage({ route, navigation }) {
             alignItems="center"
           >
             <Text color="white" fontSize="lg">
-              {item.name}
+              {item.name} {item.amount}
             </Text>
             <Box>
               <Flex direction="row" alignItems="center">
@@ -102,65 +119,64 @@ function ListPage({ route, navigation }) {
       );
     } else {
       return (
-        <Box
-          rounded="full"
-          mb="3"
-          w="360"
-          py="3"
-          bgColor="gray.500"
-          onPress={handleEdit.bind(this, item)}
+        <Flex
+          w="96"
+          direction="row"
+          justifyContent="space-evenly"
+          alignItems="center"
         >
-          <Button onLongPress={handleBuy.bind(this, item)} variant="ghost">
-            {item.name}
-          </Button>
-          {/* <Flex
-            direction="row"
-            w="full"
-            justifyContent="space-evenly"
-            alignItems="center"
-          >
-            <Text color="white" fontSize="lg">
-              {item.name}
-            </Text>
-            <Box>
-              <Flex direction="row">
-                <Button
-                  onPress={handleEdit.bind(this, item)}
-                  variant="ghost"
-                  onLongPress={longClick}
-                >
-                  <AntDesign name="caretup" size={28} color="white" />
-                </Button>
-                <Button onPress={handleEdit.bind(this, item)} variant="ghost">
-                  <Feather name="trash" size={28} color="white" />
-                </Button>
+          <Box rounded="lg" mb="3" w="72" py="3" bgColor="gray.300">
+            <Button variant="ghost" onLongPress={handleBuy.bind(this, item)}>
+              <Flex
+                direction="row"
+                justifyContent="space-between"
+                _text={{
+                  color: "purple.900",
+                  fontSize: "lg",
+                  fontWeight: "bold",
+                }}
+                w="32"
+              >
+                {item.name} {item.amount}
               </Flex>
-            </Box>
-          </Flex> */}
-        </Box>
+            </Button>
+          </Box>
+          <Box rounded="lg" mb="3" w="16" py="3" bgColor="purple.700">
+            <Button variant="ghost" onPress={handleEdit.bind(this, item)}>
+              <Feather name="edit" size={24} color="white" />
+            </Button>
+          </Box>
+        </Flex>
       );
     }
   };
   return (
     <Box flex="1" safeAreaTop safeAreaBottom marginTop="4" marginBottom="24">
-      <Modal isOpen={showModal} onClose={() => setShowModal(false)} size="lg">
-        <Modal.Content maxWidth="350">
-          <Modal.Header>Edit Item</Modal.Header>
+      {/* <Modal isOpen={showModal} onClose={() => setShowModal(false)} size="lg">
+        <Modal.Content maxWidth="370" h="80" bg="info.900">
+          <Modal.Header
+            bg="info.900"
+            _text={{ color: "white", textAlign: "center" }}
+          >
+            Edit Item
+          </Modal.Header>
           <Modal.Body>
             <Input
               variant="rounded"
-              placeholder={`Edit the item name`}
+              value={itemName}
               onChangeText={(text) => setItemName(text)}
-              mb="5"
+              mt="5"
+              mb="8"
+              color="white"
             />
             <Input
               variant="rounded"
-              placeholder={"Enter new amount"}
-              mb="5"
+              value={itemAmount}
+              color="white"
               onChangeText={(text) => setItemAmount(text)}
             />
           </Modal.Body>
-          <Modal.Footer>
+          <Modal.Footer bg="info.900">
             <Button
               flex="1"
               onPress={() => {
@@ -169,14 +185,14 @@ function ListPage({ route, navigation }) {
                     ...notBought,
                     { name: itemName, amount: itemAmount, bought_by: null },
                   ]);
-                  listItems.push({
+                  updatedItems.push({
                     name: itemName,
                     amount: itemAmount,
                     bought_by: null,
                   });
                 } else {
                   // Update item
-                  const new_list = listItems.filter(
+                  const new_list = updatedItems.filter(
                     (item) => item.name !== prev_name
                   );
                   // Append new item
@@ -197,38 +213,61 @@ function ListPage({ route, navigation }) {
             >
               Save Item
             </Button>
+            <Button>Close without saving</Button>
           </Modal.Footer>
         </Modal.Content>
-      </Modal>
-      <Flex direction="row" w="350">
-        <Heading fontSize="xl" px="8" pb="3" color="purple.800">
+      </Modal> */}
+      <Flex direction="row" w="full" justifyContent="space-evenly">
+        <Heading fontSize="3xl" mb="5" color="purple.900">
           {listName}
         </Heading>
-        <Spacer />
-        <Button
-          size="xs"
-          colorScheme="blue"
-          onPress={() => {
-            setShowModal(true);
-          }}
-          mb="3"
-        >
-          {/* Share screen should pop up */}
-          Share your list
-        </Button>
-        <Button
-          size="xs"
-          colorScheme="blue"
-          mb="3"
-          onPress={() => {
-            setEditMode(true);
-          }}
-        >
-          Edit list
-        </Button>
+        <Flex direction="row" w="24" justifyContent="center">
+          <Button mb="3" w="12" h="12" mx="2" colorScheme="purple">
+            <AntDesign name="sharealt" size={24} color="white" />
+          </Button>
+          <Button onPress={handleListDelete} colorScheme="danger" h="12" w="12">
+            <AntDesign name="delete" size={24} color="white" />
+          </Button>
+        </Flex>
       </Flex>
-      {/* Add Item Section Here */}
       <Center>
+        <Flex
+          direction="row"
+          alignItems="center"
+          w="full"
+          justifyContent="space-evenly"
+          mb="5"
+        >
+          <Input
+            placeholder="Item Name"
+            w="32"
+            h="12"
+            onChangeText={(text) => setAddItemName(text)}
+            value={addItemName}
+          />
+          <Input
+            placeholder="Item Amount"
+            w="32"
+            h="12"
+            onChangeText={(text) => {
+              setAddItemAmount(text);
+            }}
+            value={addItemAmount}
+          />
+          <Box py="1" bgColor="purple.900" rounded="lg" w="12" h="12">
+            <Button
+              variant={"ghost"}
+              _text={{
+                fontSize: "xs",
+                color: "white",
+                fontWeight: "bold",
+              }}
+              onPress={handleAddItem}
+            >
+              Add
+            </Button>
+          </Box>
+        </Flex>
         <SectionList
           contentContainerStyle={{ paddingBottom: 30 }}
           sections={[
@@ -252,14 +291,11 @@ function ListPage({ route, navigation }) {
         <Button
           onPress={() => [navigation.navigate("TabStack")]}
           h="12"
-          w="300"
+          w="72"
           marginTop="4"
-          marginBottom="2"
+          marginBottom="3"
         >
-          Save Changes and Return
-        </Button>
-        <Button onPress={handleListDelete} colorScheme="danger" h="12" w="300">
-          Delete List
+          Save Changes
         </Button>
       </Center>
     </Box>

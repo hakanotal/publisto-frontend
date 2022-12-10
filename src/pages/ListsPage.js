@@ -1,7 +1,7 @@
 import { StatusBar } from "expo-status-bar";
 // const { startListeningDb } = require("../api/dbListener");
 import React, { useState, Component, useEffect } from "react";
-import { Text, FlatList } from "react-native";
+import { FlatList } from "react-native";
 import fetchLists from "../functions/fetchLists";
 import createList from "../functions/createList";
 import { useIsFocused } from "@react-navigation/native";
@@ -14,6 +14,7 @@ import {
   Button,
   Flex,
   Modal,
+  Text,
   Input,
 } from "native-base";
 
@@ -28,7 +29,8 @@ const ListsPage = ({ navigation }) => {
   useEffect(() => {
     (async function () {
       const privateData = await fetchLists("private");
-      setPrivateData(compare_func(privateData));
+      const sortedPrivateData = await compare_func(privateData);
+      setPrivateData(sortedPrivateData);
       setLoading(false);
     })();
   }, [isFocused, privateData]);
@@ -45,9 +47,9 @@ const ListsPage = ({ navigation }) => {
     >
       <Button
         colorScheme="blueGray"
-        py="5"
+        py="4"
         variant="ghost"
-        _text={{ fontSize: "xl", color: "purple.900", fontWeight: "bold" }}
+        _text={{ fontSize: "2xl", color: "purple.900", fontWeight: "bold" }}
         onPress={() => {
           navigation.push("List", {
             listName: item.name,
@@ -65,19 +67,20 @@ const ListsPage = ({ navigation }) => {
   return (
     <Box flex="1" safeAreaTop>
       <Modal isOpen={showModal} onClose={() => setShowModal(false)} size="lg">
-        <Modal.Content maxWidth="350">
-          <Modal.Header>Enter List Name</Modal.Header>
-          <Modal.Body>
+        <Modal.Content maxWidth="350" bg="indigo.900" h="56">
+          <Modal.Header bg="indigo.900">Enter List Name</Modal.Header>
+          <Modal.Body bg="indigo.900">
             <Input
               variant="rounded"
               placeholder="New List..."
               onChangeText={(listName) => setListName(listName)}
             />
           </Modal.Body>
-          <Modal.Footer>
+          <Modal.Footer bg="indigo.900">
             <Button
               flex="1"
               onPress={() => {
+                console.log(listName);
                 createList(listName);
                 (async function () {
                   const privateData = await fetchLists("private");
@@ -92,10 +95,10 @@ const ListsPage = ({ navigation }) => {
         </Modal.Content>
       </Modal>
       <Heading fontSize="3xl" px="8" pb="3" color="purple.900">
-        My Lists
+        PUBLISTO
       </Heading>
       <Flex direction="row" w="350">
-        <Heading fontSize="xl" px="8" pb="3" color="purple.800">
+        <Heading fontSize="2xl" px="8" pb="3" color="purple.800">
           Private Lists
         </Heading>
         <Spacer />
@@ -112,13 +115,36 @@ const ListsPage = ({ navigation }) => {
       </Flex>
       <Center>
         {isLoading && <Text color="purple.700">Loading...</Text>}
-        {privateData && (
+        {privateData && privateData.length > 0 && (
           <FlatList
             data={privateData}
             renderItem={renderList}
             keyExtractor={(item) => item.id}
             contentContainerStyle={{ paddingBottom: 80 }} // Add padding to bottom of list because the last item disappers behind the tab bar somehow
           ></FlatList>
+        )}
+        {privateData && privateData.length == 0 && (
+          <Flex w="full" h="96" alignItems="center" justifyContent="center">
+            <Text color="purple.900" fontSize={"3xl"}>
+              No private lists yet
+            </Text>
+            <Box rounded="lg" mb="3" w="72" py="3" bgColor="cyan.700">
+              <Button
+                variant="ghost"
+                delayLongPress={10}
+                _text={{
+                  color: "white",
+                  fontSize: "lg",
+                  fontWeight: "bold",
+                }}
+                onPress={() => {
+                  setShowModal(true);
+                }}
+              >
+                New Private List
+              </Button>
+            </Box>
+          </Flex>
         )}
       </Center>
     </Box>

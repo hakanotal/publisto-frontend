@@ -1,5 +1,5 @@
 import getToken from "./getToken";
-import apiUrl from "../constants/apiUrl";
+import apiUrl from "../constants/apiURL";
 export default deleteList = async (id) => {
   const token = await getToken();
   const response = await fetch(apiUrl + "/api/v1/list/delete", {

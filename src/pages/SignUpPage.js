@@ -11,7 +11,7 @@ import {
   TouchableOpacity,
   SafeAreaView,
 } from "react-native";
-import apiUrl from "../constants/apiUrl";
+import apiUrl from "../constants/apiURL";
 const SignUpPage = ({ navigation }) => {
   function isValidEmail(email) {
     return /\S+@\S+\.\S+/.test(email);

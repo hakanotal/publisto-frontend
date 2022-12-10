@@ -11,7 +11,7 @@ import {
   TouchableHighlight,
   View,
 } from "react-native";
-import apiUrl from "../constants/apiUrl";
+import apiUrl from "../constants/apiURL";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 
 import validator from "validator";

@@ -1,7 +1,7 @@
 import React, { useState, Component, useEffect } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import getToken from "../functions/getToken";
-import apiUrl from "../constants/apiUrl";
+import apiUrl from "../constants/apiURL";
 import {
   StyleSheet,
   View,

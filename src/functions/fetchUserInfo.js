@@ -1,5 +1,5 @@
 import getToken from "./getToken";
-import apiUrl from "../constants/apiUrl";
+import apiUrl from "../constants/apiURL";
 export default fetchUserInfo = async (id) => {
   const token = await getToken();
   const response = await fetch(apiUrl + "/api/v1/user/profile/" + id, {
