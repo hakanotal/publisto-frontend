@@ -57,6 +57,8 @@ const ListsPage = ({ navigation }) => {
             listItems: item.items,
             listUpdatedAt: item.updated_at,
             listUser: item.user_id,
+            listPublic: item.is_public,
+            listActive: item.is_active,
           });
         }}
       >

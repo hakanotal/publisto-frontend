@@ -1,6 +1,6 @@
 // const { startListeningDb } = require("../api/dbListener");
 import { SectionList, TouchableOpacity, View } from "react-native";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Box,
   Spacer,
@@ -15,21 +15,30 @@ import {
 } from "native-base";
 import { AntDesign, Feather, Ionicons } from "@expo/vector-icons";
 import deleteList from "../functions/deleteList";
+import updateList from "../functions/updateList";
 import fetchUserInfo from "../functions/fetchUserInfo";
-import { color } from "@mui/system";
-let prev_name;
 function ListPage({ route, navigation }) {
   const [showModal, setShowModal] = useState(false);
   const [addItemName, setAddItemName] = useState("");
   const [addItemAmount, setAddItemAmount] = useState("");
   const [itemName, setItemName] = useState("");
   const [itemAmount, setItemAmount] = useState("");
-
+  const [itemToChange, setItemToChange] = useState("");
   const capitalizeFirstLetter = (string) => {
     return string.charAt(0).toUpperCase() + string.slice(1);
   };
-  const { listId, listItems, listName, listUpdatedAt, listUser } = route.params;
+  const {
+    listId,
+    listItems,
+    listName,
+    listUpdatedAt,
+    listUser,
+    listPublic,
+    listActive,
+  } = route.params;
   const [updatedItems, setUpdatedItems] = useState(listItems);
+  const not_bought = updatedItems.filter((item) => item.bought_by == null);
+  const purchased = updatedItems.filter((item) => item.bought_by != null);
   updatedItems.forEach((item) => {
     item.name = capitalizeFirstLetter(item.name);
   });
@@ -37,27 +46,75 @@ function ListPage({ route, navigation }) {
     await deleteList(listId);
     navigation.navigate("Lists");
   };
+  const moveUp = (item) => {
+    // Good code it moves up from Co-Pilot
+    // const index = updatedItems.findIndex((e) => e.name === item.name);
+    // if (index == 0) {
+    //   return;
+    // }
+    // const my_items = [
+    //   ...updatedItems.slice(0, index - 1),
+    //   updatedItems[index],
+    //   updatedItems[index - 1],
+    //   ...updatedItems.slice(index + 1),
+    // ];
 
+    const index = updatedItems.findIndex((e) => e.name === item.name);
+
+    const my_items = [
+      ...updatedItems.slice(0, index),
+      { ...updatedItems[index], bought_by: null },
+      ...updatedItems.slice(index + 1),
+    ];
+    setUpdatedItems(my_items);
+  };
+  const handleReturn = async () => {
+    const result = await updateList(
+      listId,
+      listName,
+      updatedItems,
+      listActive,
+      listPublic
+    );
+    navigation.navigate("TabStack");
+  };
+  const submitEdit = async () => {
+    const index = updatedItems.findIndex((e) => e.name === itemToChange);
+    const my_items = [
+      ...updatedItems.slice(0, index),
+      { name: itemName, amount: itemAmount, bought_by: null },
+      ...updatedItems.slice(index + 1),
+    ];
+    setUpdatedItems(my_items);
+    setShowModal(false);
+  };
+  const deleteItem = (item) => {
+    const index = updatedItems.findIndex((e) => e.name === item.name);
+    const my_items = [
+      ...updatedItems.slice(0, index),
+      ...updatedItems.slice(index + 1),
+    ];
+    setUpdatedItems(my_items);
+  };
   const handleEdit = async (item) => {
     setItemName(item.name);
+    setItemToChange(item.name);
     setItemAmount(item.amount);
-    prev_name = item.name; // use this to change the name of the item in db
     setShowModal(true);
   };
   const handleBuy = async (item) => {
-    item.bought_by = "Hakan";
-    setUpdatedItems((prevState) => [...prevState, item]);
-    console.log(updatedItems);
-    setNotBought(updatedItems.filter((item) => item.bought_by == null));
-    setPurchased(updatedItems.filter((item) => item.bought_by != null));
+    const userData = await fetchUserInfo(listUser);
+    const user_name = userData.name;
+    const index = updatedItems.findIndex((e) => e.name === item.name);
+    const my_items = [
+      ...updatedItems.slice(0, index),
+      { ...updatedItems[index], bought_by: user_name },
+      ...updatedItems.slice(index + 1),
+    ];
+    setUpdatedItems(my_items);
   };
-  const [purchased, setPurchased] = useState(
-    updatedItems.filter((item) => item.bought_by != null)
-  );
-  const [notBought, setNotBought] = useState(
-    updatedItems.filter((item) => item.bought_by == null)
-  );
   const handleAddItem = () => {
+    const notBought = updatedItems.filter((item) => item.bought_by == null);
     if (notBought.some((e) => e.name === addItemName)) {
       setAddItemAmount("");
       setAddItemName("");
@@ -67,27 +124,25 @@ function ListPage({ route, navigation }) {
       console.log("empty item");
       return;
     }
-    setUpdatedItems(
-      (prevState) => [
-        ...prevState,
-        { name: addItemName, amount: addItemAmount, bought_by: null },
-      ],
-      setNotBought(updatedItems.filter((item) => item.bought_by == null))
-    );
-    setPurchased(updatedItems.filter((item) => item.bought_by != null));
-    setNotBought(updatedItems.filter((item) => item.bought_by == null));
+    setUpdatedItems((prevState) => [
+      ...prevState,
+      { name: addItemName, amount: addItemAmount, bought_by: null },
+    ]);
+
     setAddItemAmount("");
     setAddItemName("");
   };
-  const [editMode, setEditMode] = useState(false);
+  useEffect(() => {
+    const not_bought = updatedItems.filter((item) => item.bought_by == null);
+    const purchased = updatedItems.filter((item) => item.bought_by != null);
+  }, [updatedItems]);
   const renderListItem = (item) => {
     if (item.bought_by != null) {
       return (
         <Box
           rounded="full"
-          borderColor="gray.300"
           mb="3"
-          w="330"
+          w="80"
           py="3"
           bgColor="purple.900"
           onPress={handleEdit.bind(this, item)}
@@ -106,10 +161,10 @@ function ListPage({ route, navigation }) {
                 <Text color="white" fontSize="sm">
                   {item.bought_by}
                 </Text>
-                <Button onPress={handleEdit.bind(this, item)} variant="ghost">
+                <Button onPress={moveUp.bind(this, item)} variant="ghost">
                   <AntDesign name="caretup" size={28} color="white" />
                 </Button>
-                <Button onPress={handleEdit.bind(this, item)} variant="ghost">
+                <Button onPress={deleteItem.bind(this, item)} variant="ghost">
                   <Feather name="trash" size={28} color="white" />
                 </Button>
               </Flex>
@@ -152,7 +207,7 @@ function ListPage({ route, navigation }) {
   };
   return (
     <Box flex="1" safeAreaTop safeAreaBottom marginTop="4" marginBottom="24">
-      {/* <Modal isOpen={showModal} onClose={() => setShowModal(false)} size="lg">
+      <Modal isOpen={showModal} onClose={() => setShowModal(false)} size="lg">
         <Modal.Content maxWidth="370" h="80" bg="info.900">
           <Modal.Header
             bg="info.900"
@@ -177,46 +232,13 @@ function ListPage({ route, navigation }) {
             />
           </Modal.Body>
           <Modal.Footer bg="info.900">
-            <Button
-              flex="1"
-              onPress={() => {
-                if (!editMode) {
-                  setNotBought([
-                    ...notBought,
-                    { name: itemName, amount: itemAmount, bought_by: null },
-                  ]);
-                  updatedItems.push({
-                    name: itemName,
-                    amount: itemAmount,
-                    bought_by: null,
-                  });
-                } else {
-                  // Update item
-                  const new_list = updatedItems.filter(
-                    (item) => item.name !== prev_name
-                  );
-                  // Append new item
-                  setNotBought([
-                    ...new_list,
-                    { name: itemName, amount: itemAmount, bought_by: null },
-                  ]);
-                  listItems.push({
-                    name: itemName,
-                    amount: itemAmount,
-                    bought_by: null,
-                  });
-                }
-                setItemName("");
-                setItemAmount("");
-                setShowModal(false);
-              }}
-            >
+            <Button flex="1" onPress={submitEdit}>
               Save Item
             </Button>
             <Button>Close without saving</Button>
           </Modal.Footer>
         </Modal.Content>
-      </Modal> */}
+      </Modal>
       <Flex direction="row" w="full" justifyContent="space-evenly">
         <Heading fontSize="3xl" mb="5" color="purple.900">
           {listName}
@@ -271,7 +293,10 @@ function ListPage({ route, navigation }) {
         <SectionList
           contentContainerStyle={{ paddingBottom: 30 }}
           sections={[
-            { title: "To Be Purchased", data: notBought },
+            {
+              title: "To Be Purchased",
+              data: not_bought,
+            },
             {
               title: "Purchased",
               data: purchased,
@@ -289,7 +314,7 @@ function ListPage({ route, navigation }) {
           keyExtractor={(item, index) => `basicListEntry-${item.name}`}
         />
         <Button
-          onPress={() => [navigation.navigate("TabStack")]}
+          onPress={handleReturn}
           h="12"
           w="72"
           marginTop="4"
