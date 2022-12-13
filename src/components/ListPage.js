@@ -138,41 +138,50 @@ function ListPage({ route, navigation }) {
   }, [updatedItems]);
   const renderListItem = (item) => {
     if (item.bought_by != null) {
-      return (
-        <Box
-          rounded="2xl"
-          mb="3"
-          ml="3"
-          w="72"
-          py="3"
-          bgColor="purple.900"
-          onPress={handleEdit.bind(this, item)}
-        >
-          <Flex
-            direction="row"
-            w="full"
-            justifyContent="space-evenly"
-            alignItems="center"
+      if (not_bought.length == 0) {
+        <Box rounded="2xl" mb="3" ml="3" w="72" py="3" bgColor="purple.900">
+          <Text color="white" fontSize="lg">
+            NO ITEMS
+          </Text>
+        </Box>;
+        return;
+      } else {
+        return (
+          <Box
+            rounded="2xl"
+            mb="3"
+            ml="3"
+            w="72"
+            py="3"
+            bgColor="purple.900"
+            onPress={handleEdit.bind(this, item)}
           >
-            <Text color="white" fontSize="lg">
-              {item.name}
-            </Text>
-            <Box>
-              <Flex direction="row" alignItems="center">
-                <Text color="white" fontSize="sm">
-                  {capitalizeFirstLetter(item.bought_by)}
-                </Text>
-                <Button onPress={moveUp.bind(this, item)} variant="ghost">
-                  <AntDesign name="caretup" size={28} color="white" />
-                </Button>
-                <Button onPress={deleteItem.bind(this, item)} variant="ghost">
-                  <Feather name="trash" size={28} color="white" />
-                </Button>
-              </Flex>
-            </Box>
-          </Flex>
-        </Box>
-      );
+            <Flex
+              direction="row"
+              w="full"
+              justifyContent="space-evenly"
+              alignItems="center"
+            >
+              <Text color="white" fontSize="lg">
+                {item.name}
+              </Text>
+              <Box>
+                <Flex direction="row" alignItems="center">
+                  <Text color="white" fontSize="sm">
+                    {capitalizeFirstLetter(item.bought_by)}
+                  </Text>
+                  <Button onPress={moveUp.bind(this, item)} variant="ghost">
+                    <AntDesign name="caretup" size={28} color="white" />
+                  </Button>
+                  <Button onPress={deleteItem.bind(this, item)} variant="ghost">
+                    <Feather name="trash" size={28} color="white" />
+                  </Button>
+                </Flex>
+              </Box>
+            </Flex>
+          </Box>
+        );
+      }
     } else {
       return (
         <Flex
@@ -303,6 +312,14 @@ function ListPage({ route, navigation }) {
               data: purchased,
             },
           ]}
+          // List empty component does not render. Solve this problem
+          ListEmptyComponent={() => (
+            <Box w="full" bg="info.900">
+              <Text color="black" fontSize="lg">
+                No Items in List
+              </Text>
+            </Box>
+          )}
           renderItem={({ item }) => renderListItem(item)}
           renderSectionHeader={({ section }) => (
             <Flex direction="row" w="350">

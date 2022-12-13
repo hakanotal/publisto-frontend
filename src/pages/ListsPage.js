@@ -15,6 +15,7 @@ import {
   Flex,
   Modal,
   Text,
+  Alert,
   Input,
 } from "native-base";
 
@@ -24,6 +25,7 @@ const ListsPage = ({ navigation }) => {
   const [isLoading, setLoading] = useState(true);
   const [listName, setListName] = useState("");
   const [showModal, setShowModal] = useState(false);
+  const [isListCreated, setIsListCreated] = useState(false);
   const isFocused = useIsFocused();
   // Fetch lists from database in first render and
   useEffect(() => {
@@ -34,7 +36,11 @@ const ListsPage = ({ navigation }) => {
       setLoading(false);
     })();
   }, [isFocused, privateData]);
-
+  useEffect(() => {
+    setTimeout(() => {
+      setIsListCreated(false);
+    }, 2000);
+  }, [isListCreated]);
   const renderList = ({ item }) => (
     <Box
       bg="muted.300"
@@ -89,7 +95,6 @@ const ListsPage = ({ navigation }) => {
               flex="1"
               colorScheme="fuchsia"
               onPress={() => {
-                console.log(listName);
                 createList(listName);
                 (async function () {
                   const privateData = await fetchLists("private");
@@ -97,6 +102,8 @@ const ListsPage = ({ navigation }) => {
                   setPrivateData(sortedData);
                 })();
                 setShowModal(false);
+                setIsListCreated(false); // to imitate the alert component flushing
+                setIsListCreated(true);
               }}
             >
               Create Private List
@@ -123,8 +130,18 @@ const ListsPage = ({ navigation }) => {
           New Private List
         </Button>
       </Flex>
+      {/* showCreated List */}
+
       <Center>
         {isLoading && <Text color="purple.700">Loading...</Text>}
+        {/* Here is the alert component from Native-Base library. You can add x button and set its isListCreated to false when it is clicked. */}
+        {isListCreated && (
+          <Alert variant="solid" w="100%" status="success" mb="5" mt="5">
+            <Text fontSize="md" color="white">
+              List is created successfully!
+            </Text>
+          </Alert>
+        )}
         {privateData && privateData.length > 0 && (
           <FlatList
             data={privateData}
@@ -133,6 +150,7 @@ const ListsPage = ({ navigation }) => {
             contentContainerStyle={{ paddingBottom: 80 }} // Add padding to bottom of list because the last item disappers behind the tab bar somehow
           ></FlatList>
         )}
+
         {privateData && privateData.length == 0 && (
           <Flex w="full" h="96" alignItems="center" justifyContent="center">
             <Text color="purple.900" fontSize={"3xl"}>
