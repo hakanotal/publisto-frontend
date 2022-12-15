@@ -75,25 +75,25 @@ const ListsPage = ({ navigation }) => {
   return (
     <Box flex="1" safeAreaTop>
       <Modal isOpen={showModal} onClose={() => setShowModal(false)} size="lg">
-        <Modal.Content maxWidth="350" bg="indigo.800" h="56" rounded="2xl">
+        <Modal.Content maxWidth="350" bg="muted.200" h="56" rounded="2xl">
           <Modal.Header
-            bg="indigo.800"
-            _text={{ color: "white", textAlign: "center" }}
+            bg="muted.200"
+            _text={{ color: "bluegray", textAlign: "center" }}
           >
             Enter List Name
           </Modal.Header>
-          <Modal.Body bg="indigo.800">
+          <Modal.Body bg="muted.200">
             <Input
               variant="outline"
               placeholder="New List..."
-              color="white"
+              color="black"
               onChangeText={(listName) => setListName(listName)}
             />
           </Modal.Body>
-          <Modal.Footer bg="indigo.800">
+          <Modal.Footer bg="muted.200">
             <Button
               flex="1"
-              colorScheme="fuchsia"
+              colorScheme="purple"
               onPress={() => {
                 createList(listName);
                 (async function () {
@@ -111,21 +111,25 @@ const ListsPage = ({ navigation }) => {
           </Modal.Footer>
         </Modal.Content>
       </Modal>
-      <Heading fontSize="3xl" px="8" pb="3" color="purple.900">
+      <Heading fontSize="3xl" px="8" pb="3" py={5} color="purple.900">
         PUBLISTO
       </Heading>
-      <Flex direction="row" w="72">
+
+      <Flex direction="row" w="350" pb={3}>
         <Heading fontSize="2xl" px="8" pb="3" color="purple.800">
           Private Lists
         </Heading>
         <Spacer />
         <Button
           size="xs"
-          colorScheme="blue"
+          pl={5}
+          pr={5}
+          rounded="md"
+          colorScheme="light"
           onPress={() => {
             setShowModal(true);
           }}
-          mb="3"
+          mb="4"
         >
           New Private List
         </Button>

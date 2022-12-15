@@ -9,6 +9,9 @@ import {
   TouchableOpacity,
   SafeAreaView,
   TouchableHighlight,
+  KeyboardAvoidingView,
+  TouchableWithoutFeedback,
+  Keyboard,
   View,
 } from "react-native";
 import apiUrl from "../constants/apiURL";
@@ -62,9 +65,9 @@ const LoginPage = ({ navigation }) => {
     }
   };
   return (
-    <SafeAreaView style={styles.container}>
-      {/* KeyboardAwareScrollView hides forget pass and sign up parts  */}
-      <KeyboardAwareScrollView>
+      <KeyboardAvoidingView behavior="padding"  style={styles.container}>
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+          <View style={styles.container}>
         <Image
           source={require("../../assets/images/icon.png")}
           style={styles.image}
@@ -108,8 +111,10 @@ const LoginPage = ({ navigation }) => {
             Don't have an account?
           </Text>
         </TouchableOpacity>
-      </KeyboardAwareScrollView>
-    </SafeAreaView>
+        </View>
+        </TouchableWithoutFeedback>
+        
+      </KeyboardAvoidingView>
   );
 };
 const styles = StyleSheet.create({
