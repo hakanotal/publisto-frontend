@@ -63,6 +63,7 @@ const LoginPage = ({ navigation }) => {
   };
   return (
     <SafeAreaView style={styles.container}>
+      {/* KeyboardAwareScrollView hides forget pass and sign up parts  */}
       <KeyboardAwareScrollView>
         <Image
           source={require("../../assets/images/icon.png")}

@@ -2,25 +2,8 @@ import React, { useState, Component, useEffect } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import getToken from "../functions/getToken";
 import apiUrl from "../constants/apiURL";
-import {
-  StyleSheet,
-  View,
-  TextInput,
-  TouchableOpacity,
-  SafeAreaView,
-  Image,
-} from "react-native";
-import {
-  Box,
-  Button,
-  Heading,
-  Text,
-  Center,
-  Container,
-  FormControl,
-  Input,
-  Modal,
-} from "native-base";
+import { Image } from "react-native";
+import { Box, Button, Text, FormControl, Input, Modal } from "native-base";
 // update user profile function
 
 const getUserInfo = async () => {
@@ -65,6 +48,7 @@ export default ProfilePage = ({ navigation }) => {
   const [image, setImage] = useState("");
   const [editProfile, setEditProfile] = useState(false);
   const [showModal, setShowModal] = useState(false);
+  // useEffect run when the page is first loaded
   useEffect(() => {
     (async function () {
       const user_data = await getUserInfo();

@@ -249,6 +249,39 @@ function ListPage({ route, navigation }) {
           </Modal.Footer>
         </Modal.Content>
       </Modal>
+      {/* second modal for Deleting the list */}
+      {/* <Modal isOpen={showModal2} onClose={() => setShowModal(false)} size="lg">
+        <Modal.Content maxWidth="370" h="80" bg="info.900">
+          <Modal.Header
+            bg="info.900"
+            _text={{ color: "white", textAlign: "center" }}
+          >
+            Edit Item
+          </Modal.Header>
+          <Modal.Body>
+            <Input
+              variant="rounded"
+              value={itemName}
+              onChangeText={(text) => setItemName(text)}
+              mt="5"
+              mb="8"
+              color="white"
+            />
+            <Input
+              variant="rounded"
+              value={itemAmount}
+              color="white"
+              onChangeText={(text) => setItemAmount(text)}
+            />
+          </Modal.Body>
+          <Modal.Footer bg="info.900">
+            <Button flex="1" onPress={submitEdit}>
+              Save Item
+            </Button>
+            <Button>Close without saving</Button>
+          </Modal.Footer>
+        </Modal.Content>
+      </Modal> */}
       <Flex direction="row" w="full" justifyContent="space-evenly">
         <Heading fontSize="3xl" mb="5" color="purple.900">
           {listName}

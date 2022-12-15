@@ -114,7 +114,7 @@ const ListsPage = ({ navigation }) => {
       <Heading fontSize="3xl" px="8" pb="3" color="purple.900">
         PUBLISTO
       </Heading>
-      <Flex direction="row" w="350">
+      <Flex direction="row" w="72">
         <Heading fontSize="2xl" px="8" pb="3" color="purple.800">
           Private Lists
         </Heading>
