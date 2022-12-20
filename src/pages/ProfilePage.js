@@ -3,7 +3,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import getToken from "../functions/getToken";
 import apiUrl from "../constants/apiURL";
 import { Image } from "react-native";
-import { Box, Button, Text, FormControl, Input, Modal } from "native-base";
+import { Box, Button, Text, FormControl, Input, Modal , Flex} from "native-base";
 // update user profile function
 
 const getUserInfo = async () => {
@@ -22,9 +22,9 @@ const getUserInfo = async () => {
   return data;
 };
 
-const updateUser = async (user_name, email, password) => {
+const updateUser = async (user_name, email, password,newPassword) => {
   const token = await getToken();
-  const response = await fetch(cloud_url + "/api/v1/list/update", {
+  const response = await fetch(apiUrl + "/api/v1/list/update", {
     method: "PUT",
     headers: {
       Authorization: "Bearer " + token,
@@ -33,27 +33,37 @@ const updateUser = async (user_name, email, password) => {
     body: JSON.stringify({
       name: user_name,
       email: email,
-      password: password,
+      oldPassword: password,
+      newPassword: newPassword,
     }),
   });
   if (response.status !== 204 && response.status !== 200) {
     console.log("Error: " + response.status);
+    alert("wrong password")
+    return false
+  }
+  else{
+    return true
   }
 };
 
 export default ProfilePage = ({ navigation }) => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
   const [image, setImage] = useState("");
   const [editProfile, setEditProfile] = useState(false);
   const [showModal, setShowModal] = useState(false);
+
+  const [password, setPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [newname, setNewName] = useState("");
+  const [newemail, setNewEmail] = useState("");
+
   // useEffect run when the page is first loaded
   useEffect(() => {
     (async function () {
       const user_data = await getUserInfo();
       setName(user_data.name);
-      setPassword(user_data.password);
       setEmail(user_data.email);
       setImage(user_data.image);
     })();
@@ -69,9 +79,9 @@ export default ProfilePage = ({ navigation }) => {
   }
 
   return (
-    <Box alignItems="center" safeAreaTop flex="1">
+    <Box alignItems="center" safeAreaTop flex="1" pt={5}>
       {image && (
-        <Image
+        <Image 
           style={{
             width: 200,
             height: 200,
@@ -86,19 +96,36 @@ export default ProfilePage = ({ navigation }) => {
       )}
       {editProfile ? (
         <FormControl isInvalid w="75%" maxW="300px">
-          <FormControl.Label mt="6">Password</FormControl.Label>
-          <Input placeholder="Enter password" mt="1" />
           <FormControl.Label mt="6">E-mail</FormControl.Label>
-          <Input placeholder="Enter email" mt="1" />
+          <Input placeholder="Enter email" mt="1" onChangeText={(text) => setNewEmail(text)} />
           <FormControl.Label mt="6">Name</FormControl.Label>
-          <Input placeholder="Enter name" mt="1" />
+          <Input placeholder="Enter name" mt="1" onChangeText={(text) => setNewName(text)} />
+          <FormControl.Label isRequired mt="6">Current Password</FormControl.Label>
+          <Input type="password"  placeholder="password" onChangeText={(text) => setPassword(text)} />
+          <FormControl.Label mt="6">New Password</FormControl.Label>
+          <Input type="password"  placeholder="password" onChangeText={(text) => setNewPassword(text)} />
           <Button
             mt="10"
             onPress={() => {
-              // (async function () {
-              //   const privateData = await fetchLists("private");
-              //   setPrivateData(compare_func(privateData));
-              // })();
+              
+              if (newname == "") {
+                setNewName(name);
+              }
+              if (newemail == "") {
+                setNewEmail(email);
+              }
+              
+              if(newPassword == ""){
+                setNewPassword(password)
+              }
+              (async function () {
+              response = updateUser(newname, newemail, password, newPassword);
+              if(response)
+              {
+                setName(newname);
+                setEmail(newemail);
+              }
+              })();
               setEditProfile(false);
             }}
           >
@@ -106,70 +133,61 @@ export default ProfilePage = ({ navigation }) => {
           </Button>
         </FormControl>
       ) : (
+
         <Box w="75%" maxW="300px">
+          <Flex px={5}>
           <Text fontSize="lg" mt="6">
             Name: {name}
           </Text>
-          <Text fontSize="lg" mt="6">
+          <Text fontSize="lg" pb={10} mt="6">
             Email: {email}
           </Text>
-          <Button
-            mt="10"
-            onPress={() => {
-              // (async function () {
-              //   const privateData = await fetchLists("private");
-              //   setPrivateData(compare_func(privateData));
-              // })();
-              setEditProfile(true);
-              setShowModal(true);
-              // First show pop-up for double password check
-            }}
-          >
-            Edit Profile
-          </Button>
-          <Button
-            mt="10"
-            onPress={async () => {
-              navigation.navigate("Signin");
-              try {
-                await AsyncStorage.clear();
-              } catch (error) {
-                console.log(error);
-              }
-            }}
-          >
-            Sign out
-          </Button>
+          </Flex>
+          <Flex pb={10} px={3}>
+          <Box rounded="md" w={280} h={12} bgColor="purple.900">
+              <Button
+                variant="ghost"
+                delayLongPress={10}
+                _text={{
+                  fontSize: "md",
+                  color: "white",
+                  fontWeight: "bold",
+                }}
+                onPress={() => {
+                  setEditProfile(true);
+
+                }}
+              >
+                Edit Profile
+              </Button>
+            </Box>
+            </Flex>
+            <Flex pb={10} px={3}>
+            <Box rounded="md" w={280} h={12}   bgColor="purple.900">
+              <Button
+                variant="ghost"
+                delayLongPress={10}
+                _text={{
+                  fontSize: "md",
+                  color: "white",
+                  fontWeight: "bold",
+                }}
+                onPress={async () => {
+                  navigation.navigate("Signin");
+                  try {
+                    await AsyncStorage.clear();
+                  } catch (error) {
+                    console.log(error);
+                  }
+                }}
+              >
+                Sign Out
+              </Button>
+            </Box>
+          </Flex>
         </Box>
       )}
-      <Modal isOpen={showModal} onClose={() => setShowModal(false)} size="lg">
-        <Modal.Content maxWidth="350">
-          <Modal.Header>Enter your password</Modal.Header>
-          <Modal.Body>
-            <Input
-              variant="outline"
-              mb="5"
-              type="password"
-              placeholder="Enter your password"
-            />
-            <Input
-              variant="outline"
-              type="password"
-              placeholder="Enter your password"
-            />
-          </Modal.Body>
-          <Modal.Footer>
-            <Button
-              flex="1"
-              onPress={() => {
-                setShowModal(false);
-              }}
-            >
-              Confirm
-            </Button>
-          </Modal.Footer>
-        </Modal.Content>
-      </Modal>
+     
     </Box>
   );
 };

@@ -3,7 +3,7 @@ import { StatusBar } from "expo-status-bar";
 import React, { useState, Component, useEffect } from "react";
 import { FlatList } from "react-native";
 import fetchLists from "../functions/fetchLists";
-import createList from "../functions/createList";
+import joinList from "../functions/joinList";
 import { useIsFocused } from "@react-navigation/native";
 import compare_func from "../functions/compare_func";
 import {
@@ -22,7 +22,7 @@ const ListsPage = ({ navigation }) => {
   // Define state variables
   const [publicData, setPublicData] = useState([]);
   const [isLoading, setLoading] = useState(true);
-  const [listName, setListName] = useState("");
+  const [newListId, setNewListId] = useState("");
   const [showModal, setShowModal] = useState(false);
   const isFocused = useIsFocused();
   const [isListCreated, setIsListCreated] = useState(false);
@@ -79,14 +79,14 @@ const ListsPage = ({ navigation }) => {
             bg="muted.200"
             _text={{ color: "black", textAlign: "center" }}
           >
-            Enter List ID
+            Enter List ID to Join
           </Modal.Header>
           <Modal.Body bg="muted.200">
             <Input
               variant="outline"
               placeholder="New List..."
               color="black"
-              onChangeText={(listName) => setListName(listName)}
+              onChangeText={(newListId) => setNewListId(newListId)}
             />
           </Modal.Body>
           <Modal.Footer bg="muted.200">
@@ -94,8 +94,8 @@ const ListsPage = ({ navigation }) => {
               flex="1"
               colorScheme="purple"
               onPress={() => {
-                console.log(listName);
-                createList(listName);
+                console.log(newListId);
+                joinList(newListId);
                 (async function () {
                   const publicData = await fetchLists("public");
                   const sortedData = await compare_func(publicData);
@@ -112,24 +112,27 @@ const ListsPage = ({ navigation }) => {
       <Heading fontSize="3xl" px="8" pb="3" py={5} color="purple.900">
         PUBLISTO
       </Heading>
-      <Flex direction="row" w="350" pb = {3}>
+      <Flex direction="row" w="350" pb = {20}>
         <Heading fontSize="2xl" px="8" pb="3" color="purple.800">
           Public Lists
         </Heading>
         <Spacer />
-        <Button
-          size="xs"
-          pl={5}
-          pr={5}
-          rounded="md"
-          colorScheme="light"
-          onPress={() => {
-            setShowModal(true);
-          }}
-          mb="4"
-        >
-          Add Public List
-        </Button>
+        <Box rounded="md" w={100} h={9}   bgColor="purple.900">
+              <Button
+                variant="ghost"
+                delayLongPress={10}
+                _text={{
+                  fontSize: "xs",
+                  color: "white",
+                  fontWeight: "bold",
+                }}
+                onPress={() => {
+                  setShowModal(true);
+                }}
+              >
+                New List 
+              </Button>
+            </Box>
       </Flex>
       <Center>
         {isLoading && <Text color="purple.700">Loading...</Text>}
@@ -150,29 +153,29 @@ const ListsPage = ({ navigation }) => {
         )}
         {publicData && publicData.length == 0 && (
           <Flex w="full" h="96" alignItems="center" justifyContent="center">
-            <Text color="purple.900" fontSize={"3xl"}>
-              No private lists yet
-            </Text>
-            <Box rounded="lg" mb="3" w="72" py="3" bgColor="cyan.700">
-              <Button
-                variant="ghost"
-                delayLongPress={10}
-                _text={{
-                  color: "white",
-                  fontSize: "lg",
-                  fontWeight: "bold",
-                }}
-                onPress={() => {
-                  setShowModal(true);
-                }}
-              >
-                New Public List
-              </Button>
-            </Box>
-          </Flex>
-        )}
-      </Center>
-    </Box>
+          <Text color="purple.900" pb ={5} fontSize={"3xl"}>
+            No Public Lists Yet
+          </Text>
+          <Box rounded="lg" mb="2" w="72" py="2"  bgColor="purple.900">
+            <Button
+              variant="ghost"
+              delayLongPress={10}
+              _text={{
+                color: "white",
+                fontSize: "lg",
+                fontWeight: "bold",
+              }}
+              onPress={() => {
+                setShowModal(true);
+              }}
+            >
+              Join One 
+            </Button>
+          </Box>
+        </Flex>
+      )}
+    </Center>
+  </Box>
   );
 };
 

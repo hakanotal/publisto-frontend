@@ -1,5 +1,6 @@
 // const { startListeningDb } = require("../api/dbListener");
-import { SectionList, TouchableOpacity, View } from "react-native";
+import { SectionList, TouchableOpacity, View,BackHandler} from "react-native";
+import * as Clipboard from 'expo-clipboard';
 import { useState, useEffect } from "react";
 import {
   Box,
@@ -18,6 +19,8 @@ import { AntDesign, Feather, Ionicons } from "@expo/vector-icons";
 import deleteList from "../functions/deleteList";
 import updateList from "../functions/updateList";
 import fetchUserInfo from "../functions/fetchUserInfo";
+
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 function ListPage({ route, navigation }) {
   const [showModal, setShowModal] = useState(false); // For adding items
@@ -140,17 +143,12 @@ function ListPage({ route, navigation }) {
     const not_bought = updatedItems.filter((item) => item.bought_by == null);
     const purchased = updatedItems.filter((item) => item.bought_by != null);
   }, [updatedItems]);
+  const backHandler = BackHandler.addEventListener(
+    "hardwareBackPress",
+    handleReturn
+  );
   const renderListItem = (item) => {
-    {console.log(item.bought_by)}
-    if (item.bought_by != null) {
-      if (not_bought.length == 0) {
-        <Box rounded="2xl" mb="3" ml="3" w="72" py="3" bgColor="purple.900">
-          <Text color="white" fontSize="lg">
-            NO ITEMS
-          </Text>
-        </Box>;
-        return;
-      } else {
+        if(item.bought_by != null){
         return (
           <Box
             rounded="2xl"
@@ -186,8 +184,7 @@ function ListPage({ route, navigation }) {
             </Flex>
           </Box>
         );
-      }
-    } else {
+      } else {
       return (
         <Flex
           w="96"
@@ -196,7 +193,7 @@ function ListPage({ route, navigation }) {
           alignItems="center"
         >
           <Box rounded="2xl" mb="3" w="72" py="3" bgColor="gray.300">
-            <Button variant="ghost" onLongPress={handleBuy.bind(this, item)}>
+            <Button variant="ghost" onLongPress={handleBuy.bind(this, item)} delayLongPress={1} >
               <Flex
                 direction="row"
                 justifyContent="space-between"
@@ -223,9 +220,9 @@ function ListPage({ route, navigation }) {
   return (
     <Box flex="1" safeAreaTop safeAreaBottom marginTop="4" marginBottom="24">
       <Modal isOpen={showModal} onClose={() => setShowModal(false)} size="lg">
-        <Modal.Content maxWidth="370" h="80" bg="info.900">
+        <Modal.Content maxWidth="370" h="80" bg="gray.500">
           <Modal.Header
-            bg="info.900"
+            bg="gray.500"
             _text={{ color: "white", textAlign: "center" }}
           >
             Edit Item
@@ -246,7 +243,7 @@ function ListPage({ route, navigation }) {
               onChangeText={(text) => setItemAmount(text)}
             />
           </Modal.Body>
-          <Modal.Footer bg="info.900">
+          <Modal.Footer bg="gray.500">
             <Button flex="1" onPress={submitEdit}>
               Save Item
             </Button>
@@ -256,14 +253,14 @@ function ListPage({ route, navigation }) {
       </Modal>
       {/* second modal for Deleting the list */}
       { <Modal isOpen={showModal2} onClose={() => setShowModal2(false)} size="lg">
-        <Modal.Content maxWidth="370" h="40" bg="info.900">
+        <Modal.Content maxWidth="370" h="40" bg="gray.500">
           <Modal.Header
-            bg="info.900"
+            bg="gray.500"
             _text={{ color: "white", textAlign: "center" }}
           >
             Are you sure you want to delete this list?
           </Modal.Header>
-          <Modal.Footer bg="info.900">
+          <Modal.Footer bg="gray.500">
             <Button  h={10} right={20} onPress={ handleListDelete}>
               Delete List
             </Button>
@@ -274,21 +271,24 @@ function ListPage({ route, navigation }) {
       }
       {/* for the sharing  */ }
       { <Modal isOpen={showModal3} onClose={() => setShowModal3(false)} size="lg">
-        <Modal.Content maxWidth="370" maxHeight="250" bg="info.900">
+        <Modal.Content maxWidth="370" maxHeight="250" bg="gray.500">
           <Modal.Header
-            bg="info.900"
+            bg="gray.500"
             _text={{ color: "white", textAlign: "center" }}
           >
-            List Id for sharing
+            List ID
           </Modal.Header>
           <Modal.Body >
-            <Text color="white" fontSize="25" >
-              {listId}
+            <Text color="white" fontSize="25" Center >
+              {String(listId).padStart(6, '0')}
             </Text>
           </Modal.Body>
-          <Modal.Footer bg="info.900">
+          <Modal.Footer bg="gray.500">
+            
             {/* https://reactnative.dev/docs/clipboard  for copying to clipboard */}
-            <Button  flex={1} onPress={() => setShowModal3(false)} > Copy </Button>
+            <Box bg={"purple.900"} flex={1} h={10} rounded="md" w={10} >
+            <Button  variant="ghost" onPress={ async () => { await Clipboard.setStringAsync(String(listId).padStart(6, '0')); setShowModal3(false);}} > Copy </Button>
+            </Box>
           </Modal.Footer>
 
         </Modal.Content>
@@ -299,12 +299,18 @@ function ListPage({ route, navigation }) {
           {listName}
         </Heading>
         <Flex direction="row" w="24" justifyContent="center">
-          <Button onPress={() => setShowModal3(true)}  mb="3" w="12" h="12" mx="2" colorScheme="purple">
+          <Flex px={5}>
+          <Box bg={"purple.900"} h={12} rounded="md" w="16">
+          <Button onPress={() => setShowModal3(true)}  mb="3" w="12" h="12" mx="2" variant={"ghost"}>
             <AntDesign name="sharealt" size={24} color="white" />
           </Button>
-          <Button onPress={() => setShowModal2(true)} colorScheme="purple" left={4} h="12" w="12">
+          </Box>
+          </Flex>
+          <Box bg={"purple.900"} h={12} rounded="md" w="16">
+          <Button onPress={() => setShowModal2(true)} variant="ghost" left={2} h="12" w="12">
             <AntDesign name="delete" size={24} color="white" />
           </Button>
+          </Box>
         </Flex>
       </Flex>
       <Center>
@@ -359,7 +365,7 @@ function ListPage({ route, navigation }) {
 
           // List empty component does not render. Solve this problem
           ListEmptyComponent={() => (
-            <Box w="full" bg="info.900">
+            <Box w="full" bg="gray.900">
               <Text color="black" fontSize="lg">
                 No Items in List
               </Text>
@@ -369,7 +375,7 @@ function ListPage({ route, navigation }) {
           renderItem={({ item }) => renderListItem(item)}
           renderSectionHeader={({ section }) => (
             <Flex direction="row" w="350">
-              <Heading fontSize="xl" px="8" pb="3" color="purple.800">
+              <Heading fontSize="xl" px="8" pb="3" color="purple.900">
                 {section.title}
               </Heading>
               <Spacer />
@@ -377,16 +383,6 @@ function ListPage({ route, navigation }) {
           )}
           keyExtractor={(item, index) => `basicListEntry-${item.name}`}
         />
-        <Button
-          onPress={handleReturn}
-          colorScheme="purple"
-          h="12"
-          w="72"
-          marginTop="4"
-          marginBottom="3"
-        >
-          Save Changes
-        </Button>
       </Center>
     </Box>
   );
