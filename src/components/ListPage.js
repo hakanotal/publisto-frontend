@@ -137,10 +137,12 @@ function ListPage({ route, navigation }) {
 
     if (isNaN(addItemAmount)) {
       setMessage("Amount must be a number!");
+      setIsOpen(true);
       return;
     }
     if (!isNaN(addItemName)) {
       setMessage("Name must be a string!");
+      setIsOpen(true);
       return;
     }
     setUpdatedItems((prevState) => [
@@ -159,42 +161,54 @@ function ListPage({ route, navigation }) {
     "hardwareBackPress",
     handleReturn
   );
+  const shortenLongWords = (name) => {
+    if (name.length > 20) {
+      return name.substring(0, 20) + "...";
+    }
+    return name;
+  };
   const renderListItem = (item) => {
     if (item.bought_by != null) {
       return (
-        <Box
-          rounded="2xl"
-          mb="3"
-          ml="3"
-          w="72"
-          py="3"
-          bgColor="purple.900"
-          onPress={handleEdit.bind(this, item)}
+        <Flex
+          w="96"
+          direction="row"
+          justifyContent="space-evenly"
+          alignItems="center"
         >
-          <Flex
-            direction="row"
-            w="full"
-            justifyContent="space-evenly"
-            alignItems="center"
+          <Box
+            rounded="2xl"
+            mb="3"
+            ml="3"
+            w="64"
+            py="3"
+            bgColor="purple.900"
+            onPress={handleEdit.bind(this, item)}
           >
-            <Text color="white" fontSize="lg">
-              {item.name}
-            </Text>
-            <Box>
-              <Flex direction="row" alignItems="center">
-                <Text color="white" fontSize="sm">
-                  {capitalizeFirstLetter(item.bought_by)}
-                </Text>
-                <Button onPress={moveUp.bind(this, item)} variant="ghost">
-                  <AntDesign name="caretup" size={28} color="white" />
-                </Button>
-                <Button onPress={deleteItem.bind(this, item)} variant="ghost">
-                  <Feather name="trash" size={28} color="white" />
-                </Button>
-              </Flex>
-            </Box>
-          </Flex>
-        </Box>
+            <Flex
+              direction="row"
+              justifyContent="space-around"
+              _text={{
+                color: "white",
+                fontSize: "lg",
+              }}
+              ml="8"
+              w="48"
+            >
+              {item.name} {item.bought_by}
+            </Flex>
+          </Box>
+          <Box rounded="lg" mb="3" w="12" py="1" bgColor="purple.700">
+            <Button variant="ghost" onPress={moveUp.bind(this, item)}>
+              <AntDesign name="caretup" size={18} color="white" />
+            </Button>
+          </Box>
+          <Box rounded="lg" mb="3" w="12" py="1" bgColor="purple.700">
+            <Button variant="ghost" onPress={deleteItem.bind(this, item)}>
+              <Feather name="trash" size={18} color="white" />
+            </Button>
+          </Box>
+        </Flex>
       );
     } else {
       return (
@@ -204,11 +218,11 @@ function ListPage({ route, navigation }) {
           justifyContent="space-evenly"
           alignItems="center"
         >
-          <Box rounded="2xl" mb="3" w="72" py="3" bgColor="gray.300">
+          <Box rounded="2xl" mb="3" ml="3" w="64" py="1" bgColor="gray.300">
             <Button
               variant="ghost"
               onLongPress={handleBuy.bind(this, item)}
-              delayLongPress={1}
+              delayLongPress="500"
             >
               <Flex
                 direction="row"
@@ -224,9 +238,14 @@ function ListPage({ route, navigation }) {
               </Flex>
             </Button>
           </Box>
-          <Box rounded="lg" mb="3" w="16" py="3" bgColor="purple.700">
+          <Box rounded="lg" mb="3" w="12" py="1" bgColor="purple.700">
+            <Button variant="ghost" onPress={handleBuy.bind(this, item)}>
+              <AntDesign name="check" size={18} color="white" />
+            </Button>
+          </Box>
+          <Box rounded="lg" mb="3" w="12" py="1" bgColor="purple.700">
             <Button variant="ghost" onPress={handleEdit.bind(this, item)}>
-              <Feather name="edit" size={24} color="white" />
+              <Feather name="edit" size={18} color="white" />
             </Button>
           </Box>
         </Flex>
@@ -267,7 +286,6 @@ function ListPage({ route, navigation }) {
           </Modal.Footer>
         </Modal.Content>
       </Modal>
-      {/* second modal for Deleting the list */}
       {
         <Modal
           isOpen={showModal2}
@@ -286,8 +304,7 @@ function ListPage({ route, navigation }) {
                 Delete List
               </Button>
               <Button h={10} right={9} onPress={() => setShowModal2(false)}>
-                {" "}
-                Return{" "}
+                Cancel
               </Button>
             </Modal.Footer>
           </Modal.Content>
@@ -339,10 +356,13 @@ function ListPage({ route, navigation }) {
         pb={3}
         justifyContent="space-evenly"
       >
-        <Heading fontSize="3xl" mb="5" color="purple.900">
-          {listName}
-        </Heading>
-        <Flex direction="row" w="24" justifyContent="center">
+        <Flex w="40" justifyContent="center" h="16">
+          <Heading fontSize="xl" textAlign="center" color="purple.900">
+            {shortenLongWords(listName)}
+          </Heading>
+        </Flex>
+
+        <Flex direction="row" w="24" h="16" justifyContent="center">
           <Flex px={5}>
             <Box bg={"purple.900"} h={12} rounded="md" w="16">
               <Button
@@ -409,10 +429,23 @@ function ListPage({ route, navigation }) {
           </Box>
         </Flex>
         {isOpen && (
-          <Alert variant="solid" w="100%" status="danger" mb="5" mt="5">
-            <Text fontSize="md" color="white">
-              {message}
-            </Text>
+          <Alert variant="solid" w="100%" status="danger" mb="1" mt="1">
+            <Flex
+              direction="row"
+              w="100%"
+              h="6"
+              justifyContent="space-around"
+              alignItems="center"
+            >
+              <Text fontSize="md" color="white">
+                {message}
+              </Text>
+              <Box w="12" h="12" color="danger.900">
+                <Button variant="ghost">
+                  <AntDesign name="close" size={24} color="white" />
+                </Button>
+              </Box>
+            </Flex>
           </Alert>
         )}
         <SectionList

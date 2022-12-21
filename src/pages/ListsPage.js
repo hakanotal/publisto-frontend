@@ -26,7 +26,12 @@ const ListsPage = ({ navigation }) => {
   const [isLoading, setLoading] = useState(true);
   const [listName, setListName] = useState("");
   const [showModal, setShowModal] = useState(false);
-  const [isListCreated, setIsListCreated] = useState(false);
+  const shortenLongWords = (name) => {
+    if (name.length > 20) {
+      return name.substring(0, 20) + "...";
+    }
+    return name;
+  };
   const isFocused = useIsFocused();
   // Fetch lists from database in first render and
   useEffect(() => {
@@ -34,19 +39,14 @@ const ListsPage = ({ navigation }) => {
       const value = await AsyncStorage.getItem("private_token");
       if (value === null) {
         navigation.navigate("Signin");
-        return
-      } 
+        return;
+      }
       const privateData = await fetchLists("private");
       const sortedPrivateData = await compare_func(privateData);
       setPrivateData(sortedPrivateData);
       setLoading(false);
     })();
   }, [isFocused, privateData]);
-  useEffect(() => {
-    setTimeout(() => {
-      setIsListCreated(false);
-    }, 2000);
-  }, [isListCreated]);
   const renderList = ({ item }) => (
     <Box
       bg="muted.300"
@@ -74,7 +74,7 @@ const ListsPage = ({ navigation }) => {
           });
         }}
       >
-        {item.name}
+        {shortenLongWords(item.name)}
       </Button>
     </Box>
   );
@@ -108,8 +108,6 @@ const ListsPage = ({ navigation }) => {
                   setPrivateData(sortedData);
                 })();
                 setShowModal(false);
-                setIsListCreated(false); // to imitate the alert component flushing
-                setIsListCreated(true);
               }}
             >
               Create Private List
@@ -121,40 +119,33 @@ const ListsPage = ({ navigation }) => {
         PUBLISTO
       </Heading>
 
-      <Flex direction="row" w="350" pb={20}>
+      <Flex direction="row" w="350" pb="5">
         <Heading fontSize="2xl" px="8" pb="2" color="purple.800">
           Private Lists
         </Heading>
         <Spacer />
-        <Box rounded="md" w={100} h={9}   bgColor="purple.900">
-              <Button
-                variant="ghost"
-                delayLongPress={10}
-                _text={{
-                  fontSize: "xs",
-                  color: "white",
-                  fontWeight: "bold",
-                }}
-                onPress={() => {
-                  setShowModal(true);
-                }}
-              >
-                New List 
-              </Button>
-            </Box>
+        <Box rounded="md" w={100} h={9} bgColor="purple.900">
+          <Button
+            variant="ghost"
+            delayLongPress={10}
+            _text={{
+              fontSize: "xs",
+              color: "white",
+              fontWeight: "bold",
+            }}
+            onPress={() => {
+              setShowModal(true);
+            }}
+          >
+            New List
+          </Button>
+        </Box>
       </Flex>
       {/* showCreated List */}
 
       <Center>
         {isLoading && <Text color="purple.700">Loading...</Text>}
-        {/* Here is the alert component from Native-Base library. You can add x button and set its isListCreated to false when it is clicked. */}
-        {isListCreated && (
-          <Alert variant="solid" w="100%" status="success" mb="5" mt="5">
-            <Text fontSize="md" color="white">
-              List is created successfully!
-            </Text>
-          </Alert>
-        )}
+
         {privateData && privateData.length > 0 && (
           <FlatList
             data={privateData}
@@ -166,10 +157,10 @@ const ListsPage = ({ navigation }) => {
 
         {privateData && privateData.length == 0 && (
           <Flex w="full" h="96" alignItems="center" justifyContent="center">
-            <Text color="purple.900" pb ={5} fontSize={"3xl"}>
+            <Text color="purple.900" pb={5} fontSize={"3xl"}>
               No Private Lists Yet
             </Text>
-            <Box rounded="lg" mb="2" w="72" py="2"  bgColor="purple.900">
+            <Box rounded="lg" mb="2" w="72" py="2" bgColor="purple.900">
               <Button
                 variant="ghost"
                 delayLongPress={10}
@@ -182,7 +173,7 @@ const ListsPage = ({ navigation }) => {
                   setShowModal(true);
                 }}
               >
-                Create One 
+                Create One
               </Button>
             </Box>
           </Flex>
