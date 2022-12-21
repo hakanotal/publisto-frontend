@@ -27,8 +27,8 @@ const ListsPage = ({ navigation }) => {
   const [listName, setListName] = useState("");
   const [showModal, setShowModal] = useState(false);
   const shortenLongWords = (name) => {
-    if (name.length > 20) {
-      return name.substring(0, 20) + "...";
+    if (name.length > 15) {
+      return name.substring(0, 15) + "...";
     }
     return name;
   };

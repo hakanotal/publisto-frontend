@@ -1,5 +1,5 @@
 // const { startListeningDb } = require("../api/dbListener");
-import { SectionList, TouchableOpacity, View, BackHandler } from "react-native";
+import { SectionList, Alert, BackHandler } from "react-native";
 import * as Clipboard from "expo-clipboard";
 import { useState, useEffect } from "react";
 import {
@@ -12,8 +12,6 @@ import {
   Modal,
   Input,
   Text,
-  Alert,
-  FormControl,
 } from "native-base";
 
 import { AntDesign, Feather, Ionicons } from "@expo/vector-icons";
@@ -28,7 +26,8 @@ function ListPage({ route, navigation }) {
   const [showModal2, setShowModal2] = useState(false); // for deleting list
   const [showModal3, setShowModal3] = useState(false); // for sharing list
   const [isOpen, setIsOpen] = useState(false);
-  const [message, setMessage] = useState("");
+  const [alertTitle, setAlertTitle] = useState("");
+  const [alertMessage, setAlertMessage] = useState("");
   const [addItemName, setAddItemName] = useState("");
   const [addItemAmount, setAddItemAmount] = useState("");
   const [itemName, setItemName] = useState("");
@@ -78,13 +77,7 @@ function ListPage({ route, navigation }) {
     setUpdatedItems(my_items);
   };
   const handleReturn = async () => {
-    const result = await updateList(
-      listId,
-      listName,
-      updatedItems,
-      listActive,
-      listPublic
-    );
+    await updateList(listId, listName, updatedItems, listActive, listPublic);
     navigation.navigate("TabStack");
   };
   const submitEdit = async () => {
@@ -122,26 +115,37 @@ function ListPage({ route, navigation }) {
     ];
     setUpdatedItems(my_items);
   };
+  function containsNumber(str) {
+    return /\d/.test(str);
+  }
   const handleAddItem = () => {
     const notBought = updatedItems.filter((item) => item.bought_by == null);
     if (notBought.some((e) => e.name === addItemName)) {
+      setAlertTitle("Item already exists!");
+      setAlertMessage(
+        "Item is already in your list. You can update it if you desire."
+      );
+      setIsOpen(true);
       setAddItemAmount("");
       setAddItemName("");
       return;
     }
     if (addItemName == "" || addItemAmount == "") {
-      setMessage("Empty values entered in either amount or name field.");
+      setAlertTitle("Empty Values");
+      setAlertMessage("Empty values entered in either amount or name field.");
       setIsOpen(true);
       return;
     }
 
     if (isNaN(addItemAmount)) {
-      setMessage("Amount must be a number!");
+      setAlertTitle("Invalid Add!");
+      setAlertMessage("Amount must be a number!");
       setIsOpen(true);
       return;
     }
-    if (!isNaN(addItemName)) {
-      setMessage("Name must be a string!");
+    if (containsNumber(addItemName)) {
+      setAlertTitle("Invalid Add!");
+      setAlertMessage("Name must be a string!");
       setIsOpen(true);
       return;
     }
@@ -162,8 +166,8 @@ function ListPage({ route, navigation }) {
     handleReturn
   );
   const shortenLongWords = (name) => {
-    if (name.length > 20) {
-      return name.substring(0, 20) + "...";
+    if (name.length > 12) {
+      return name.substring(0, 12) + "...";
     }
     return name;
   };
@@ -356,14 +360,14 @@ function ListPage({ route, navigation }) {
         pb={3}
         justifyContent="space-evenly"
       >
-        <Flex w="40" justifyContent="center" h="16">
-          <Heading fontSize="xl" textAlign="center" color="purple.900">
+        <Flex w="48" justifyContent="center" h="12">
+          <Heading fontSize="2xl" color="purple.900">
             {shortenLongWords(listName)}
           </Heading>
         </Flex>
 
         <Flex direction="row" w="24" h="16" justifyContent="center">
-          <Flex px={5}>
+          <Flex px={2}>
             <Box bg={"purple.900"} h={12} rounded="md" w="16">
               <Button
                 onPress={() => setShowModal3(true)}
@@ -428,26 +432,15 @@ function ListPage({ route, navigation }) {
             </Button>
           </Box>
         </Flex>
-        {isOpen && (
-          <Alert variant="solid" w="100%" status="danger" mb="1" mt="1">
-            <Flex
-              direction="row"
-              w="100%"
-              h="6"
-              justifyContent="space-around"
-              alignItems="center"
-            >
-              <Text fontSize="md" color="white">
-                {message}
-              </Text>
-              <Box w="12" h="12" color="danger.900">
-                <Button variant="ghost">
-                  <AntDesign name="close" size={24} color="white" />
-                </Button>
-              </Box>
-            </Flex>
-          </Alert>
-        )}
+        {isOpen &&
+          Alert.alert(alertTitle, alertMessage, [
+            {
+              text: "Cancel",
+              style: "cancel",
+              onPress: () => setIsOpen(false),
+            },
+            { text: "OK", onPress: () => setIsOpen(false) },
+          ])}
         <SectionList
           contentContainerStyle={{ paddingBottom: 30 }}
           sections={[
