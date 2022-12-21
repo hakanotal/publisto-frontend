@@ -25,7 +25,6 @@ const ListsPage = ({ navigation }) => {
   const [newListId, setNewListId] = useState("");
   const [showModal, setShowModal] = useState(false);
   const isFocused = useIsFocused();
-  const [isListCreated, setIsListCreated] = useState(false);
   // Fetch lists from database in first render and
   useEffect(() => {
     (async function () {
@@ -35,11 +34,12 @@ const ListsPage = ({ navigation }) => {
       setLoading(false);
     })();
   }, [isFocused, publicData]);
-  useEffect(() => {
-    setTimeout(() => {
-      setIsListCreated(false);
-    }, 2000);
-  }, [isListCreated]);
+  const shortenLongWords = (name) => {
+    if (name.length > 15) {
+      return name.substring(0, 15) + "...";
+    }
+    return name;
+  };
   const renderList = ({ item }) => (
     <Box
       bg="muted.300"
@@ -67,7 +67,7 @@ const ListsPage = ({ navigation }) => {
           });
         }}
       >
-        {item.name}
+        {shortenLongWords(item.name)}
       </Button>
     </Box>
   );
@@ -112,70 +112,64 @@ const ListsPage = ({ navigation }) => {
       <Heading fontSize="3xl" px="8" pb="3" py={5} color="purple.900">
         PUBLISTO
       </Heading>
-      <Flex direction="row" w="350" pb = {20}>
+      <Flex direction="row" w="96" mb="6" pr="6">
         <Heading fontSize="2xl" px="8" pb="3" color="purple.800">
           Public Lists
         </Heading>
         <Spacer />
-        <Box rounded="md" w={100} h={9}   bgColor="purple.900">
+        <Box rounded="md" w={100} h={9} bgColor="purple.900">
+          <Button
+            variant="ghost"
+            delayLongPress={10}
+            _text={{
+              fontSize: "xs",
+              color: "white",
+              fontWeight: "bold",
+            }}
+            onPress={() => {
+              setShowModal(true);
+            }}
+          >
+            New List
+          </Button>
+        </Box>
+      </Flex>
+      <Center>
+        {isLoading && <Text color="purple.700">Loading...</Text>}
+
+        {publicData && publicData.length > 0 && (
+          <FlatList
+            data={publicData}
+            renderItem={renderList}
+            keyExtractor={(item) => item.id}
+            contentContainerStyle={{ paddingBottom: 120 }} // Add padding to bottom of list because the last item disappers behind the tab bar somehow
+          ></FlatList>
+        )}
+        {publicData && publicData.length == 0 && (
+          <Flex w="full" h="96" alignItems="center" justifyContent="center">
+            <Text color="purple.900" pb={5} fontSize={"3xl"}>
+              No Public Lists Yet
+            </Text>
+            <Box rounded="lg" mb="2" w="72" py="2" bgColor="purple.900">
               <Button
                 variant="ghost"
                 delayLongPress={10}
                 _text={{
-                  fontSize: "xs",
                   color: "white",
+                  fontSize: "lg",
                   fontWeight: "bold",
                 }}
                 onPress={() => {
                   setShowModal(true);
                 }}
               >
-                New List 
+                Join One
               </Button>
             </Box>
-      </Flex>
-      <Center>
-        {isLoading && <Text color="purple.700">Loading...</Text>}
-        {isListCreated && (
-          <Alert variant="solid" w="100%" status="success" mb="5" mt="5">
-            <Text fontSize="md" color="white">
-              List is created successfully!
-            </Text>
-          </Alert>
+          </Flex>
         )}
-        {publicData && publicData.length > 0 && (
-          <FlatList
-            data={publicData}
-            renderItem={renderList}
-            keyExtractor={(item) => item.id}
-            contentContainerStyle={{ paddingBottom: 80 }} // Add padding to bottom of list because the last item disappers behind the tab bar somehow
-          ></FlatList>
-        )}
-        {publicData && publicData.length == 0 && (
-          <Flex w="full" h="96" alignItems="center" justifyContent="center">
-          <Text color="purple.900" pb ={5} fontSize={"3xl"}>
-            No Public Lists Yet
-          </Text>
-          <Box rounded="lg" mb="2" w="72" py="2"  bgColor="purple.900">
-            <Button
-              variant="ghost"
-              delayLongPress={10}
-              _text={{
-                color: "white",
-                fontSize: "lg",
-                fontWeight: "bold",
-              }}
-              onPress={() => {
-                setShowModal(true);
-              }}
-            >
-              Join One 
-            </Button>
-          </Box>
-        </Flex>
-      )}
-    </Center>
-  </Box>
+      </Center>
+    </Box>
   );
 };
 

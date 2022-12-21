@@ -26,6 +26,7 @@ function ListPage({ route, navigation }) {
   const [showModal2, setShowModal2] = useState(false); // for deleting list
   const [showModal3, setShowModal3] = useState(false); // for sharing list
   const [isOpen, setIsOpen] = useState(false);
+  const [isNotItem, setIsNotItem] = useState(true);
   const [alertTitle, setAlertTitle] = useState("");
   const [alertMessage, setAlertMessage] = useState("");
   const [addItemName, setAddItemName] = useState("");
@@ -46,6 +47,7 @@ function ListPage({ route, navigation }) {
     listActive,
   } = route.params;
   const [updatedItems, setUpdatedItems] = useState(listItems);
+
   const not_bought = updatedItems.filter((item) => item.bought_by == null);
   const purchased = updatedItems.filter((item) => item.bought_by != null);
   updatedItems.forEach((item) => {
@@ -160,6 +162,7 @@ function ListPage({ route, navigation }) {
   useEffect(() => {
     const not_bought = updatedItems.filter((item) => item.bought_by == null);
     const purchased = updatedItems.filter((item) => item.bought_by != null);
+    setIsNotItem(not_bought.length == 0 && purchased.length == 0);
   }, [updatedItems]);
   const backHandler = BackHandler.addEventListener(
     "hardwareBackPress",
@@ -183,7 +186,6 @@ function ListPage({ route, navigation }) {
           <Box
             rounded="2xl"
             mb="3"
-            ml="3"
             w="64"
             py="3"
             bgColor="purple.900"
@@ -222,7 +224,7 @@ function ListPage({ route, navigation }) {
           justifyContent="space-evenly"
           alignItems="center"
         >
-          <Box rounded="2xl" mb="3" ml="3" w="64" py="1" bgColor="gray.300">
+          <Box rounded="2xl" mb="3" w="64" py="1" bgColor="gray.300">
             <Button
               variant="ghost"
               onLongPress={handleBuy.bind(this, item)}
@@ -377,7 +379,7 @@ function ListPage({ route, navigation }) {
                 mx="2"
                 variant={"ghost"}
               >
-                <AntDesign name="sharealt" size={24} color="white" />
+                <AntDesign name="sharealt" size={20} color="white" />
               </Button>
             </Box>
           </Flex>
@@ -389,7 +391,7 @@ function ListPage({ route, navigation }) {
               h="12"
               w="12"
             >
-              <AntDesign name="delete" size={24} color="white" />
+              <Feather name="trash" size={20} color="white" />
             </Button>
           </Box>
         </Flex>
@@ -441,38 +443,60 @@ function ListPage({ route, navigation }) {
             },
             { text: "OK", onPress: () => setIsOpen(false) },
           ])}
-        <SectionList
-          contentContainerStyle={{ paddingBottom: 30 }}
-          sections={[
-            {
-              title: "To Be Purchased",
-              data: not_bought,
-            },
-            {
-              title: "Purchased",
-              data: purchased,
-            },
-          ]}
-          // List empty component does not render. Solve this problem
-          ListEmptyComponent={() => (
-            <Box w="full" bg="gray.900">
-              <Text color="black" fontSize="lg">
-                No Items in List
-              </Text>
-            </Box>
-          )}
-          renderItem={({ item }) => renderListItem(item)}
-          renderSectionHeader={({ section }) => (
-            <Flex direction="row" w="350">
-              <Heading fontSize="xl" px="8" pb="3" color="purple.900">
-                {section.title}
-              </Heading>
-              <Spacer />
-            </Flex>
-          )}
-          keyExtractor={(item, index) => `basicListEntry-${item.name}`}
-        />
+
+        {isNotItem && (
+          <Box
+            w="full"
+            _text={{
+              color: "purple.900",
+              textAlign: "center",
+              fontSize: "4xl",
+            }}
+            h="40"
+            alignItems="center"
+            justifyContent="center"
+          >
+            No Item
+          </Box>
+        )}
+
+        {!isNotItem && (
+          <SectionList
+            contentContainerStyle={{ paddingBottom: 30 }}
+            sections={[
+              {
+                title: "To Be Purchased",
+                data: not_bought,
+              },
+              {
+                title: "Purchased",
+                data: purchased,
+              },
+            ]}
+            // List empty component does not render. Solve this problem
+
+            renderItem={({ item }) => renderListItem(item)}
+            renderSectionHeader={({ section }) => (
+              <Flex direction="row" w="350">
+                <Heading fontSize="xl" px="8" pb="3" color="purple.900">
+                  {section.title}
+                </Heading>
+                <Spacer />
+              </Flex>
+            )}
+            keyExtractor={(item, index) => `basicListEntry-${item.name}`}
+          />
+        )}
         {/* Save changes and return */}
+        <Box bg="purple.900" h="12" mt="2" mb="32" rounded="md" w="72">
+          <Button
+            variant="ghost"
+            onPress={handleReturn}
+            _text={{ color: "white", textAlign: "center", fontSize: "lg" }}
+          >
+            Save Changes
+          </Button>
+        </Box>
         {/* Discard Changes */}
       </Center>
     </Box>

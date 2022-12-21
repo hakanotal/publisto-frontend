@@ -119,7 +119,7 @@ const ListsPage = ({ navigation }) => {
         PUBLISTO
       </Heading>
 
-      <Flex direction="row" w="350" pb="5">
+      <Flex direction="row" w="96" mb="5" pr="6">
         <Heading fontSize="2xl" px="8" pb="2" color="purple.800">
           Private Lists
         </Heading>
@@ -151,7 +151,7 @@ const ListsPage = ({ navigation }) => {
             data={privateData}
             renderItem={renderList}
             keyExtractor={(item) => item.id}
-            contentContainerStyle={{ paddingBottom: 80 }} // Add padding to bottom of list because the last item disappers behind the tab bar somehow
+            contentContainerStyle={{ paddingBottom: 120 }} // Add padding to bottom of list because the last item disappers behind the tab bar somehow
           ></FlatList>
         )}
 
