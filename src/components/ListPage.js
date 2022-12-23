@@ -18,6 +18,8 @@ import { AntDesign, Feather, Ionicons } from "@expo/vector-icons";
 import deleteList from "../functions/deleteList";
 import updateList from "../functions/updateList";
 import fetchUserInfo from "../functions/fetchUserInfo";
+import quit_list from "../functions/quitList";
+
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
@@ -34,6 +36,9 @@ function ListPage({ route, navigation }) {
   const [itemName, setItemName] = useState("");
   const [itemAmount, setItemAmount] = useState("");
   const [itemToChange, setItemToChange] = useState("");
+  const [userId, setuserId] = useState("");
+  const [userName, setuserName] = useState("");
+
   const capitalizeFirstLetter = (string) => {
     return string.charAt(0).toUpperCase() + string.slice(1);
   };
@@ -47,7 +52,7 @@ function ListPage({ route, navigation }) {
     listActive,
   } = route.params;
   const [updatedItems, setUpdatedItems] = useState(listItems);
-
+  
   const not_bought = updatedItems.filter((item) => item.bought_by == null);
   const purchased = updatedItems.filter((item) => item.bought_by != null);
   updatedItems.forEach((item) => {
@@ -55,8 +60,13 @@ function ListPage({ route, navigation }) {
   });
   const handleListDelete = async () => {
     await deleteList(listId);
-    navigation.navigate("Lists");
+    navigation.navigate("TabStack");
   };
+  const handleQuitList = async () => {
+    await quit_list(listId);
+    navigation.navigate("TabStack");
+  };
+
   const moveUp = (item) => {
     // Good code it moves up from Co-Pilot
     // const index = updatedItems.findIndex((e) => e.name === item.name);
@@ -106,13 +116,11 @@ function ListPage({ route, navigation }) {
     setItemToChange(item.name);
     setShowModal(true);
   };
-  const handleBuy = async (item) => {
-    const userData = await fetchUserInfo(listUser);
-    const user_name = userData.name;
+  const handleBuy = (item) => {
     const index = updatedItems.findIndex((e) => e.name === item.name);
     const my_items = [
       ...updatedItems.slice(0, index),
-      { ...updatedItems[index], bought_by: user_name },
+      { ...updatedItems[index], bought_by: userName },
       ...updatedItems.slice(index + 1),
     ];
     setUpdatedItems(my_items);
@@ -160,14 +168,15 @@ function ListPage({ route, navigation }) {
     setAddItemName("");
   };
   useEffect(() => {
+    (async () => { 
+      const userData = await fetchUserInfo();
+      setuserId(userData.id);
+      setuserName(userData.name); 
+    })();
     const not_bought = updatedItems.filter((item) => item.bought_by == null);
     const purchased = updatedItems.filter((item) => item.bought_by != null);
     setIsNotItem(not_bought.length == 0 && purchased.length == 0);
   }, [updatedItems]);
-  const backHandler = BackHandler.addEventListener(
-    "hardwareBackPress",
-    handleReturn
-  );
   const shortenLongWords = (name) => {
     if (name.length > 12) {
       return name.substring(0, 12) + "...";
@@ -294,7 +303,7 @@ function ListPage({ route, navigation }) {
       </Modal>
       {
         <Modal
-          isOpen={showModal2}
+          isOpen={showModal2 && userId === listUser}
           onClose={() => setShowModal2(false)}
           size="lg"
         >
@@ -306,12 +315,20 @@ function ListPage({ route, navigation }) {
               Are you sure you want to delete this list?
             </Modal.Header>
             <Modal.Footer bg="gray.500">
-              <Button h={10} right={20} onPress={handleListDelete}>
+            <Box  bg={"purple.900"} flex={1} h={45} right="2" rounded="md" w={2}>
+              <Button  variant={"ghost"} onPress={handleListDelete}>
+                <Text color="white" fontSize="15" Center>
                 Delete List
+                </Text>
               </Button>
-              <Button h={10} right={9} onPress={() => setShowModal2(false)}>
+              </Box>
+              <Box  bg={"purple.900"} flex={1} h={45} left="2" rounded="md"  width={2}>
+              <Button variant={"ghost"}  onPress={() => setShowModal2(false)}>
+                <Text color="white" fontSize="15" Center>
                 Cancel
+                </Text>
               </Button>
+              </Box>
             </Modal.Footer>
           </Modal.Content>
         </Modal>
@@ -323,7 +340,7 @@ function ListPage({ route, navigation }) {
           onClose={() => setShowModal3(false)}
           size="lg"
         >
-          <Modal.Content maxWidth="370" maxHeight="250" bg="gray.500">
+          <Modal.Content maxWidth="370" maxHeight="300" bg="gray.500">
             <Modal.Header
               bg="gray.500"
               _text={{ color: "white", textAlign: "center" }}
@@ -335,9 +352,9 @@ function ListPage({ route, navigation }) {
                 {String(listId).padStart(6, "0")}
               </Text>
             </Modal.Body>
-            <Modal.Footer bg="gray.500">
+            <Modal.Footer bg="gray.500" height={100}>
               {/* https://reactnative.dev/docs/clipboard  for copying to clipboard */}
-              <Box bg={"purple.900"} flex={1} h={10} rounded="md" w={10}>
+              <Box bg={"purple.900"} flex={1} h={50} rounded="md" w={5}>
                 <Button
                   variant="ghost"
                   onPress={async () => {
@@ -347,14 +364,48 @@ function ListPage({ route, navigation }) {
                     setShowModal3(false);
                   }}
                 >
-                  {" "}
-                  Copy{" "}
+                  <Text color="white" fontSize="lg" Center>
+                  Copy
+                  </Text>
                 </Button>
               </Box>
             </Modal.Footer>
           </Modal.Content>
         </Modal>
       }
+      {
+        <Modal
+          isOpen={showModal2 && userId != listUser}
+          onClose={() => setShowModal2(false)}
+          size="lg"
+        >
+          <Modal.Content maxWidth="370" h="40" bg="gray.500">
+            <Modal.Header
+              bg="gray.500"
+              _text={{ color: "white", textAlign: "center" }}
+            >
+              Do you want to quit this list?
+            </Modal.Header>
+            <Modal.Footer bg="gray.500">
+            <Box  bg={"purple.900"} flex={1} h={45} right="2" rounded="md" w={2}>
+              <Button  variant={"ghost"} onPress={handleQuitList}>
+                <Text color="white" fontSize="15" Center>
+                Quit List
+                </Text>
+              </Button>
+              </Box>
+              <Box  bg={"purple.900"} flex={1} h={45} left="2" rounded="md"  width={2}>
+              <Button variant={"ghost"}  onPress={() => setShowModal2(false)}>
+                <Text color="white" fontSize="15" Center>
+                Cancel
+                </Text>
+              </Button>
+              </Box>
+            </Modal.Footer>
+          </Modal.Content>
+        </Modal>
+      }
+      
       <Flex
         direction="row"
         w="full"

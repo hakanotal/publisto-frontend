@@ -1,21 +1,23 @@
 import getToken from "./getToken";
 import apiUrl from "../constants/apiURL";
-export default createList = async (name, email,oldPas,newPass) => {
+export default updateUserInfo = async (name,email,oldPassword,newPassword) => {
   const token = await getToken();
   const response = await fetch(apiUrl + "/api/v1/user/update", {
-    method: "POST",
+    method: "PUT",
     headers: {
       Authorization: "Bearer " + token,
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
       name: name,
-      email: email,
-      oldPassword: oldPas,
-      newPassword: newPass,
+      email:email, 
+      oldPassword:oldPassword, 
+      newPassword:newPassword 
     }),
   });
-  if (response.status !== 200) {
+  if (response.status !== 204 && response.status !== 200) {
     console.log("Error: " + response.status);
+    return false
   }
+  return response.json();
 };

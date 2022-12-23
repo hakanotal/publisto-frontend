@@ -63,7 +63,7 @@ const TabStack = ({ navigation }) => {
           ),
         }}
       />
-      <Tab.Screen
+      {/* <Tab.Screen
         name="Recommendation"
         component={ProfilePage}
         options={{
@@ -71,7 +71,7 @@ const TabStack = ({ navigation }) => {
             <MaterialIcons name="recommend" size={24} color="purple" />
           ),
         }}
-      />
+      /> */}
     </Tab.Navigator>
   );
 };

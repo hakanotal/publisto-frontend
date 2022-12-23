@@ -65,9 +65,13 @@ const LoginPage = ({ navigation }) => {
     }
   };
   return (
-      <KeyboardAvoidingView behavior="padding"  style={styles.container}>
-        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-          <View style={styles.container}>
+    
+     <View style={styles.container}>
+       <KeyboardAwareScrollView
+      style={ { flex: 1 } }
+      extraScrollHeight={ 50 }
+      keyboardShouldPersistTaps='handled'
+      contentContainerStyle={ { width: 400 ,height:750 } } >
         <Image
           source={require("../../assets/images/icon.png")}
           style={styles.image}
@@ -111,10 +115,8 @@ const LoginPage = ({ navigation }) => {
             Don't have an account?
           </Text>
         </TouchableOpacity>
+        </KeyboardAwareScrollView>
         </View>
-        </TouchableWithoutFeedback>
-        
-      </KeyboardAvoidingView>
   );
 };
 const styles = StyleSheet.create({

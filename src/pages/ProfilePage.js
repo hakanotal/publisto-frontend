@@ -3,8 +3,11 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import getToken from "../functions/getToken";
 import apiUrl from "../constants/apiURL";
 import { Image } from "react-native";
-import { Box, Button, Text, FormControl, Input, Modal , Flex} from "native-base";
+import { Box, Button, Text, FormControl, Input, Modal , Flex, View} from "native-base";
 // update user profile function
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+
+import updateUserInfo from "../functions/updateUserInfo";
 
 const getUserInfo = async () => {
   const token = await getToken();
@@ -22,30 +25,6 @@ const getUserInfo = async () => {
   return data;
 };
 
-const updateUser = async (user_name, email, password,newPassword) => {
-  const token = await getToken();
-  const response = await fetch(apiUrl + "/api/v1/list/update", {
-    method: "PUT",
-    headers: {
-      Authorization: "Bearer " + token,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      name: user_name,
-      email: email,
-      oldPassword: password,
-      newPassword: newPassword,
-    }),
-  });
-  if (response.status !== 204 && response.status !== 200) {
-    console.log("Error: " + response.status);
-    alert("wrong password")
-    return false
-  }
-  else{
-    return true
-  }
-};
 
 export default ProfilePage = ({ navigation }) => {
   const [name, setName] = useState("");
@@ -58,7 +37,16 @@ export default ProfilePage = ({ navigation }) => {
   const [newPassword, setNewPassword] = useState("");
   const [newname, setNewName] = useState("");
   const [newemail, setNewEmail] = useState("");
-
+  const storeToken = async (token) => {
+    /*
+     *   Store the token in the local storage
+     */
+    try {
+      await AsyncStorage.setItem("private_token", token);
+    } catch (error) {
+      console.log(error);
+    }
+  }
   // useEffect run when the page is first loaded
   useEffect(() => {
     (async function () {
@@ -80,7 +68,7 @@ export default ProfilePage = ({ navigation }) => {
 
   return (
     <Box alignItems="center" safeAreaTop flex="1" pt={5}>
-      {image && (
+      { !editProfile && image && (
         <Image 
           style={{
             width: 200,
@@ -94,19 +82,39 @@ export default ProfilePage = ({ navigation }) => {
           source={{ uri: `data:image/png;base64,${image}` }}
         ></Image>
       )}
-      {editProfile ? (
+      {editProfile && image ? (
+        <KeyboardAwareScrollView
+        extraScrollHeight={ 50 }
+        keyboardShouldPersistTaps='handled'
+        contentContainerStyle={ { width: 400 ,height:700 } }
+         >
+        <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+
+        <Image 
+        style={{
+          width: 200,
+          height: 200,
+          borderWidth: 1,
+          borderColor: "purple",
+          borderRadius: 100,
+          marginBottom: 40,
+          marginTop: 20,
+        }}
+        source={{ uri: `data:image/png;base64,${image}` }}
+      ></Image>
         <FormControl isInvalid w="75%" maxW="300px">
+          
           <FormControl.Label mt="6">E-mail</FormControl.Label>
           <Input placeholder="Enter email" mt="1" onChangeText={(text) => setNewEmail(text)} />
           <FormControl.Label mt="6">Name</FormControl.Label>
           <Input placeholder="Enter name" mt="1" onChangeText={(text) => setNewName(text)} />
           <FormControl.Label isRequired mt="6">Current Password</FormControl.Label>
-          <Input type="password"  placeholder="password" onChangeText={(text) => setPassword(text)} />
-          <FormControl.Label mt="6">New Password</FormControl.Label>
-          <Input type="password"  placeholder="password" onChangeText={(text) => setNewPassword(text)} />
+          <Input type="password"  placeholder="Password" onChangeText={(text) => setPassword(text)} />
+          <Box bg={"purple.900"} mt="5" ml="10"  h={50} rounded="md" w={200}>
           <Button
-            mt="10"
+          variant="ghost"
             onPress={() => {
+              console.log("dsadasd")
               
               if (newname == "") {
                 setNewName(name);
@@ -114,24 +122,46 @@ export default ProfilePage = ({ navigation }) => {
               if (newemail == "") {
                 setNewEmail(email);
               }
-              
-              if(newPassword == ""){
-                setNewPassword(password)
-              }
+            
               (async function () {
-              response = updateUser(newname, newemail, password, newPassword);
+                console.log(newname)
+                console.log(newemail)
+                console.log(password)
+                console.log(newPassword)
+                response = await updateUserInfo(newname, newemail, password, password);
+                storeToken(response.access_token);
               if(response)
               {
                 setName(newname);
                 setEmail(newemail);
+                setEditProfile(false);
+
+              }
+              else{
+                alert("Wrong password")
               }
               })();
-              setEditProfile(false);
             }}
           >
+            <Text color="white" fontSize="15">
             Save Changes
+            </Text>
           </Button>
+          </Box>
+          <Box bg={"purple.900"} mt="5" ml="10"  h={50} rounded="md" w={200}>
+          <Button
+          variant="ghost"
+            onPress={() => setEditProfile(false)}
+          >
+            <Text color="white" fontSize="15">
+            Cancel
+            </Text>
+          </Button>
+          </Box>
+
         </FormControl>
+        </View>
+        </KeyboardAwareScrollView>
       ) : (
 
         <Box w="75%" maxW="300px">
@@ -155,7 +185,6 @@ export default ProfilePage = ({ navigation }) => {
                 }}
                 onPress={() => {
                   setEditProfile(true);
-
                 }}
               >
                 Edit Profile

@@ -10,8 +10,11 @@ import {
   Button,
   TouchableOpacity,
   SafeAreaView,
+  KeyboardAvoidingView,
 } from "react-native";
 import apiUrl from "../constants/apiURL";
+import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
+
 const SignUpPage = ({ navigation }) => {
   function isValidEmail(email) {
     return /\S+@\S+\.\S+/.test(email);
@@ -47,7 +50,14 @@ const SignUpPage = ({ navigation }) => {
   };
 
   return (
+    
     <SafeAreaView style={styles.container}>
+    <KeyboardAwareScrollView
+    style={ { flex: 1 } }
+    extraScrollHeight={ 50 }
+    keyboardShouldPersistTaps='handled'
+    contentContainerStyle={ { width: 400 ,height:700 } } >
+      
       <Image
         source={require("../../assets/images/icon.png")}
         style={styles.image}
@@ -83,7 +93,11 @@ const SignUpPage = ({ navigation }) => {
       <TouchableOpacity style={styles.forgot_button}>
         <Text style={{ color: "#7F7E7E" }}>Forgot Password?</Text>
       </TouchableOpacity>
+      </KeyboardAwareScrollView>
+
     </SafeAreaView>
+
+
   );
 };
 
