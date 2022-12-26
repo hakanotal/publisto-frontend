@@ -26,6 +26,7 @@ const ListsPage = ({ navigation }) => {
   const [isLoading, setLoading] = useState(true);
   const [listName, setListName] = useState("");
   const [showModal, setShowModal] = useState(false);
+  const [isFirst, setIsFirst] = useState(true);
   const shortenLongWords = (name) => {
     if (name.length > 15) {
       return name.substring(0, 15) + "...";
@@ -34,6 +35,7 @@ const ListsPage = ({ navigation }) => {
   };
   const isFocused = useIsFocused();
   // Fetch lists from database in first render and
+  // update only when sort is called
   useEffect(() => {
     (async function () {
       const value = await AsyncStorage.getItem("private_token");
@@ -41,10 +43,13 @@ const ListsPage = ({ navigation }) => {
         navigation.navigate("Signin");
         return;
       }
-      const privateData = await fetchLists("private");
-      const sortedPrivateData = await compare_func(privateData);
-      setPrivateData(sortedPrivateData);
-      setLoading(false);
+      if (isFirst) {
+        const privateData = await fetchLists("private");
+        const sortedPrivateData = await compare_func(privateData);
+        setPrivateData(sortedPrivateData);
+        setLoading(false);
+        setIsFirst(false);
+      }
     })();
   }, [isFocused, privateData]);
   const renderList = ({ item }) => (
