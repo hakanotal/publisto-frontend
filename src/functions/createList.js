@@ -17,5 +17,5 @@ export default createList = async (list_name, items) => {
   });
   if (response.status !== 200) {
     console.log("Error: " + response.status);
-  }
+  } else [console.log("List created")];
 };

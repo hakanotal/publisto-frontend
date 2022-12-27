@@ -35,6 +35,7 @@
     "react-native-svg": "13.4.0",
     "react-native-url-polyfill": "^1.3.0",
     "react-native-web": "~0.18.9",
+    "react-router-native": "^6.6.1",
     "validator": "^13.7.0"
   },
   "devDependencies": {

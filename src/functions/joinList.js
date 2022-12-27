@@ -9,11 +9,11 @@ export default joinList = async (list_id) => {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      id : list_id
+      id: list_id,
     }),
   });
   if (response.status !== 400) {
     console.log("Error: " + response.status);
   }
-  console.log(response)
+  console.log(response);
 };

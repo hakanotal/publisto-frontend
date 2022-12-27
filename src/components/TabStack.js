@@ -23,7 +23,8 @@ import {
 
 const Tab = createBottomTabNavigator();
 
-const TabStack = ({ navigation }) => {
+const TabStack = ({ route, navigation }) => {
+  const deleted = route.params.isDeleted;
   return (
     <Tab.Navigator
       screenOptions={{
@@ -39,6 +40,7 @@ const TabStack = ({ navigation }) => {
       <Tab.Screen
         name="Private Lists"
         component={ListsPage}
+        initialParams={{ deleted: deleted }}
         options={{
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="list-outline" size={24} color="purple" />

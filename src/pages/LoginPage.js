@@ -8,10 +8,6 @@ import {
   TextInput,
   TouchableOpacity,
   SafeAreaView,
-  TouchableHighlight,
-  KeyboardAvoidingView,
-  TouchableWithoutFeedback,
-  Keyboard,
   View,
 } from "react-native";
 import apiUrl from "../constants/apiURL";
@@ -27,6 +23,7 @@ const LoginPage = ({ navigation }) => {
      */
     try {
       await AsyncStorage.setItem("private_token", token);
+      console.log(token);
     } catch (error) {
       console.log(error);
     }
@@ -54,8 +51,10 @@ const LoginPage = ({ navigation }) => {
           password: password,
         }),
       });
-      if (response.status !== 200)
-        throw Error("No account found with the given credentials. Try again!");
+      if (response.status !== 200) {
+        alert("You have entered invalid email or password. Try again!");
+        return;
+      }
 
       const responseJSON = await response.json();
       storeToken(responseJSON.access_token);
@@ -65,13 +64,13 @@ const LoginPage = ({ navigation }) => {
     }
   };
   return (
-    
-     <View style={styles.container}>
-       <KeyboardAwareScrollView
-      style={ { flex: 1 } }
-      extraScrollHeight={ 50 }
-      keyboardShouldPersistTaps='handled'
-      contentContainerStyle={ { width: 400 ,height:750 } } >
+    <View style={styles.container}>
+      <KeyboardAwareScrollView
+        style={{ flex: 1 }}
+        extraScrollHeight={50}
+        keyboardShouldPersistTaps="handled"
+        contentContainerStyle={{ width: 400, height: 750 }}
+      >
         <Image
           source={require("../../assets/images/icon.png")}
           style={styles.image}
@@ -115,8 +114,8 @@ const LoginPage = ({ navigation }) => {
             Don't have an account?
           </Text>
         </TouchableOpacity>
-        </KeyboardAwareScrollView>
-        </View>
+      </KeyboardAwareScrollView>
+    </View>
   );
 };
 const styles = StyleSheet.create({

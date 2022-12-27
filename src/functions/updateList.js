@@ -1,6 +1,6 @@
 import getToken from "./getToken";
 import apiUrl from "../constants/apiURL";
-export default updateList = async (id, name, items, is_active, is_public) => {
+export default updateList = async (id, name, items) => {
   const token = await getToken();
   const response = await fetch(apiUrl + "/api/v1/list/update", {
     method: "PUT",
@@ -12,8 +12,6 @@ export default updateList = async (id, name, items, is_active, is_public) => {
       id: id,
       name: name,
       items: items,
-      is_active: is_active,
-      is_public: is_public,
     }),
   });
   if (response.status !== 204 && response.status !== 200) {

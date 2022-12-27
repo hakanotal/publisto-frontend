@@ -1,5 +1,6 @@
 // const { startListeningDb } = require("../api/dbListener");
 import { SectionList, Alert, BackHandler } from "react-native";
+import { useParams } from "react-router-native";
 import * as Clipboard from "expo-clipboard";
 import { useState, useEffect } from "react";
 import {
@@ -14,16 +15,16 @@ import {
   Text,
 } from "native-base";
 
-import { AntDesign, Feather, Ionicons } from "@expo/vector-icons";
+import { AntDesign, Feather } from "@expo/vector-icons";
 import deleteList from "../functions/deleteList";
 import updateList from "../functions/updateList";
 import fetchUserInfo from "../functions/fetchUserInfo";
+import fetchItems from "../functions/fetchItems";
 import quit_list from "../functions/quitList";
 
-
-import AsyncStorage from "@react-native-async-storage/async-storage";
-
-function ListPage({ route, navigation }) {
+function ListPage(props) {
+  const { route, navigation } = props;
+  const [isLoading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false); // For adding items
   const [showModal2, setShowModal2] = useState(false); // for deleting list
   const [showModal3, setShowModal3] = useState(false); // for sharing list
@@ -38,29 +39,16 @@ function ListPage({ route, navigation }) {
   const [itemToChange, setItemToChange] = useState("");
   const [userId, setuserId] = useState("");
   const [userName, setuserName] = useState("");
-
+  const [updatedItems, setUpdatedItems] = useState([]);
+  const [isFirst, setIsFirst] = useState(true);
   const capitalizeFirstLetter = (string) => {
     return string.charAt(0).toUpperCase() + string.slice(1);
   };
-  const {
-    listId,
-    listItems,
-    listName,
-    listUpdatedAt,
-    listUser,
-    listPublic,
-    listActive,
-  } = route.params;
-  const [updatedItems, setUpdatedItems] = useState(listItems);
-  
-  const not_bought = updatedItems.filter((item) => item.bought_by == null);
-  const purchased = updatedItems.filter((item) => item.bought_by != null);
-  updatedItems.forEach((item) => {
-    item.name = capitalizeFirstLetter(item.name);
-  });
+  const { listName, listId, listUser } = route.params;
+  let listActive, listPublic;
   const handleListDelete = async () => {
     await deleteList(listId);
-    navigation.navigate("TabStack");
+    navigation.navigate("TabStack", { isDeleted: true });
   };
   const handleQuitList = async () => {
     await quit_list(listId);
@@ -76,7 +64,7 @@ function ListPage({ route, navigation }) {
     // const my_items = [
     //   ...updatedItems.slice(0, index - 1),
     //   updatedItems[index],
-    //   updatedItems[index - 1],
+    //   updatedItems[index - 1],s
     //   ...updatedItems.slice(index + 1),
     // ];
     const index = updatedItems.findIndex((e) => e.name === item.name);
@@ -167,11 +155,25 @@ function ListPage({ route, navigation }) {
     setAddItemAmount("");
     setAddItemName("");
   };
+  const not_bought = updatedItems.filter((item) => item.bought_by == null);
+  const purchased = updatedItems.filter((item) => item.bought_by != null);
   useEffect(() => {
-    (async () => { 
+    (async () => {
+      if (isFirst) {
+        listItems = await fetchItems(listId);
+        listActive = listItems.is_active;
+        listPublic = listItems.is_public;
+        setUpdatedItems(listItems.items);
+        setLoading(false);
+        updatedItems.forEach((item) => {
+          item.name = capitalizeFirstLetter(item.name);
+        });
+
+        setIsFirst(false);
+      }
       const userData = await fetchUserInfo();
       setuserId(userData.id);
-      setuserName(userData.name); 
+      setuserName(userData.name);
     })();
     const not_bought = updatedItems.filter((item) => item.bought_by == null);
     const purchased = updatedItems.filter((item) => item.bought_by != null);
@@ -210,7 +212,7 @@ function ListPage({ route, navigation }) {
               ml="8"
               w="48"
             >
-              {item.name} {item.bought_by}
+              {item.name} {`@${item.bought_by}`}
             </Flex>
           </Box>
           <Box rounded="lg" mb="3" w="12" py="1" bgColor="purple.700">
@@ -315,19 +317,33 @@ function ListPage({ route, navigation }) {
               Are you sure you want to delete this list?
             </Modal.Header>
             <Modal.Footer bg="gray.500">
-            <Box  bg={"purple.900"} flex={1} h={45} right="2" rounded="md" w={2}>
-              <Button  variant={"ghost"} onPress={handleListDelete}>
-                <Text color="white" fontSize="15" Center>
-                Delete List
-                </Text>
-              </Button>
+              <Box
+                bg={"purple.900"}
+                flex={1}
+                h={45}
+                right="2"
+                rounded="md"
+                w={2}
+              >
+                <Button variant={"ghost"} onPress={handleListDelete}>
+                  <Text color="white" fontSize="15" Center>
+                    Delete List
+                  </Text>
+                </Button>
               </Box>
-              <Box  bg={"purple.900"} flex={1} h={45} left="2" rounded="md"  width={2}>
-              <Button variant={"ghost"}  onPress={() => setShowModal2(false)}>
-                <Text color="white" fontSize="15" Center>
-                Cancel
-                </Text>
-              </Button>
+              <Box
+                bg={"purple.900"}
+                flex={1}
+                h={45}
+                left="2"
+                rounded="md"
+                width={2}
+              >
+                <Button variant={"ghost"} onPress={() => setShowModal2(false)}>
+                  <Text color="white" fontSize="15" Center>
+                    Cancel
+                  </Text>
+                </Button>
               </Box>
             </Modal.Footer>
           </Modal.Content>
@@ -365,7 +381,7 @@ function ListPage({ route, navigation }) {
                   }}
                 >
                   <Text color="white" fontSize="lg" Center>
-                  Copy
+                    Copy
                   </Text>
                 </Button>
               </Box>
@@ -387,25 +403,39 @@ function ListPage({ route, navigation }) {
               Do you want to quit this list?
             </Modal.Header>
             <Modal.Footer bg="gray.500">
-            <Box  bg={"purple.900"} flex={1} h={45} right="2" rounded="md" w={2}>
-              <Button  variant={"ghost"} onPress={handleQuitList}>
-                <Text color="white" fontSize="15" Center>
-                Quit List
-                </Text>
-              </Button>
+              <Box
+                bg={"purple.900"}
+                flex={1}
+                h={45}
+                right="2"
+                rounded="md"
+                w={2}
+              >
+                <Button variant={"ghost"} onPress={handleQuitList}>
+                  <Text color="white" fontSize="15" Center>
+                    Quit List
+                  </Text>
+                </Button>
               </Box>
-              <Box  bg={"purple.900"} flex={1} h={45} left="2" rounded="md"  width={2}>
-              <Button variant={"ghost"}  onPress={() => setShowModal2(false)}>
-                <Text color="white" fontSize="15" Center>
-                Cancel
-                </Text>
-              </Button>
+              <Box
+                bg={"purple.900"}
+                flex={1}
+                h={45}
+                left="2"
+                rounded="md"
+                width={2}
+              >
+                <Button variant={"ghost"} onPress={() => setShowModal2(false)}>
+                  <Text color="white" fontSize="15" Center>
+                    Cancel
+                  </Text>
+                </Button>
               </Box>
             </Modal.Footer>
           </Modal.Content>
         </Modal>
       }
-      
+
       <Flex
         direction="row"
         w="full"
@@ -485,7 +515,11 @@ function ListPage({ route, navigation }) {
             </Button>
           </Box>
         </Flex>
+
+        {/* Loading kısmını güzelce tasarlar mısın @halilfarukkaragoz */}
+        {isLoading && <Text color="purple.700">Loading...</Text>}
         {isOpen &&
+          !isLoading &&
           Alert.alert(alertTitle, alertMessage, [
             {
               text: "Cancel",
@@ -495,7 +529,7 @@ function ListPage({ route, navigation }) {
             { text: "OK", onPress: () => setIsOpen(false) },
           ])}
 
-        {isNotItem && (
+        {isNotItem && !isLoading && (
           <Box
             w="full"
             _text={{
@@ -511,7 +545,7 @@ function ListPage({ route, navigation }) {
           </Box>
         )}
 
-        {!isNotItem && (
+        {!isNotItem && !isLoading && (
           <SectionList
             contentContainerStyle={{ paddingBottom: 30 }}
             sections={[

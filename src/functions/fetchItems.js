@@ -2,9 +2,9 @@ import getToken from "./getToken";
 import apiUrl from "../constants/apiURL";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-export default fetchLists = async (visibility) => {
+export default fetchLists = async (listId) => {
   const token = await getToken();
-  const response = await fetch(apiUrl + "/api/v1/list/" + visibility, {
+  const response = await fetch(apiUrl + "/api/v1/list/details/" + listId, {
     method: "GET",
     headers: {
       Authorization: "Bearer " + token,

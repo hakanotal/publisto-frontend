@@ -1,6 +1,6 @@
 import { StatusBar } from "expo-status-bar";
 // const { startListeningDb } = require("../api/dbListener");
-import React, { useState, Component, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { FlatList } from "react-native";
 import fetchLists from "../functions/fetchLists";
@@ -16,17 +16,21 @@ import {
   Flex,
   Modal,
   Text,
-  Alert,
   Input,
 } from "native-base";
 
-const ListsPage = ({ navigation }) => {
+const ListsPage = (props) => {
+  console.log(props);
+  console.log(props.route.params);
+  const { navigation } = props;
   // Define state variables
   const [privateData, setPrivateData] = useState([]);
   const [isLoading, setLoading] = useState(true);
   const [listName, setListName] = useState("");
   const [showModal, setShowModal] = useState(false);
   const [isFirst, setIsFirst] = useState(true);
+  const [isListDeleted, setIsListDeleted] = useState(false);
+
   const shortenLongWords = (name) => {
     if (name.length > 15) {
       return name.substring(0, 15) + "...";
@@ -43,15 +47,25 @@ const ListsPage = ({ navigation }) => {
         navigation.navigate("Signin");
         return;
       }
-      if (isFirst) {
-        const privateData = await fetchLists("private");
-        const sortedPrivateData = await compare_func(privateData);
-        setPrivateData(sortedPrivateData);
-        setLoading(false);
-        setIsFirst(false);
-      }
+      const privateData = await fetchLists("private");
+      const sortedPrivateData = await compare_func(privateData);
+      // When privateData is updated, sort it and update state
+      // Only update when items first rendered
+
+      setPrivateData(sortedPrivateData);
+      setLoading(false);
     })();
-  }, [isFocused, privateData]);
+  }, []);
+  // @nitec427 rendering when lists are deleted does not work
+  useEffect(() => {
+    (async function () {
+      const privateData = await fetchLists("private");
+      const sortedPrivateData = await compare_func(privateData);
+
+      setPrivateData(sortedPrivateData);
+      setLoading(false);
+    });
+  }, [isFocused]);
   const renderList = ({ item }) => (
     <Box
       bg="muted.300"
@@ -71,11 +85,7 @@ const ListsPage = ({ navigation }) => {
           navigation.push("List", {
             listName: item.name,
             listId: item.id,
-            listItems: item.items,
-            listUpdatedAt: item.updated_at,
             listUser: item.user_id,
-            listPublic: item.is_public,
-            listActive: item.is_active,
           });
         }}
       >
@@ -106,8 +116,8 @@ const ListsPage = ({ navigation }) => {
               flex="1"
               colorScheme="purple"
               onPress={() => {
-                createList(listName);
                 (async function () {
+                  await createList(listName);
                   const privateData = await fetchLists("private");
                   const sortedData = await compare_func(privateData);
                   setPrivateData(sortedData);

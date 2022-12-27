@@ -18,22 +18,32 @@ import {
   Input,
 } from "native-base";
 
-const ListsPage = ({ navigation }) => {
+const ListsPage = (props) => {
+  console.log(props);
+  const { navigation } = props;
   // Define state variables
   const [publicData, setPublicData] = useState([]);
   const [isLoading, setLoading] = useState(true);
   const [newListId, setNewListId] = useState("");
   const [showModal, setShowModal] = useState(false);
+  const [isFirst, setIsFirst] = useState(true);
   const isFocused = useIsFocused();
   // Fetch lists from database in first render and
   useEffect(() => {
     (async function () {
-      const publicData = await fetchLists("public");
+      if (isFocused) {
+        const publicData = await fetchLists("public");
+        setPublicData(publicData);
+        setLoading(false);
+      }
       const sortedPublicData = await compare_func(publicData);
-      setPublicData(sortedPublicData);
-      setLoading(false);
+      if (isFirst) {
+        setPublicData(sortedPublicData);
+        setLoading(false);
+        setIsFirst(false);
+      }
     })();
-  }, [isFocused, publicData]);
+  }, []);
   const shortenLongWords = (name) => {
     if (name.length > 15) {
       return name.substring(0, 15) + "...";
