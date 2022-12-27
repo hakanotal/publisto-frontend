@@ -1,5 +1,5 @@
 import { StatusBar } from "expo-status-bar";
-// const { startListeningDb } = require("../api/dbListener");
+const { startListeningDb } = require("../api/dbListener");
 import React, { useState, useEffect } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { FlatList } from "react-native";
@@ -18,6 +18,7 @@ import {
   Text,
   Input,
 } from "native-base";
+import getUserInfo from "../functions/getUserInfo";
 
 const ListsPage = (props) => {
   const { navigation } = props;
@@ -45,6 +46,7 @@ const ListsPage = (props) => {
       }
       const privateData = await fetchLists("private");
       const sortedPrivateData = await compare_func(privateData);
+      const data = await getUserInfo();
 
       setPrivateData(sortedPrivateData);
       setLoading(false);

@@ -1,25 +1,10 @@
-import { StatusBar } from "expo-status-bar";
-import React, { useState, Component } from "react";
+import React from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import ProfilePage from "../pages/ProfilePage";
-import ListPage from "../components/ListPage";
 import ListsPage from "../pages/ListsPage";
 import PublicListPage from "../pages/PublicListPage";
-import { Button } from "native-base";
-import {
-  Ionicons,
-  MaterialIcons,
-  MaterialCommunityIcons,
-} from "@expo/vector-icons";
-import {
-  StyleSheet,
-  Text,
-  View,
-  Image,
-  TextInput,
-  TouchableOpacity,
-  SafeAreaView,
-} from "react-native";
+import { Ionicons, FontAwesome } from "@expo/vector-icons";
+import { StyleSheet } from "react-native";
 
 const Tab = createBottomTabNavigator();
 
@@ -50,7 +35,7 @@ const TabStack = ({ route, navigation }) => {
         component={PublicListPage}
         options={{
           tabBarIcon: ({ color, size }) => (
-            <Ionicons name="list-outline" size={24} color="purple" />
+            <FontAwesome name="group" size={24} color="purple" />
           ),
         }}
       />
@@ -63,15 +48,6 @@ const TabStack = ({ route, navigation }) => {
           ),
         }}
       />
-      {/* <Tab.Screen
-        name="Recommendation"
-        component={ProfilePage}
-        options={{
-          tabBarIcon: ({ color, size }) => (
-            <MaterialIcons name="recommend" size={24} color="purple" />
-          ),
-        }}
-      /> */}
     </Tab.Navigator>
   );
 };

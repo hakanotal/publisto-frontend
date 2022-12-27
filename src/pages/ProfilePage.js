@@ -15,6 +15,7 @@ import {
 } from "native-base";
 // update user profile function
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+const { startListeningDb } = require("../api/dbListener");
 
 import updateUserInfo from "../functions/updateUserInfo";
 
@@ -256,6 +257,7 @@ export default ProfilePage = ({ navigation }) => {
                 onPress={async () => {
                   try {
                     await AsyncStorage.clear();
+                    startListeningDb(3169, true);
                   } catch (error) {
                     console.log(error);
                   }

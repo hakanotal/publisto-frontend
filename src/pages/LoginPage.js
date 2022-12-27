@@ -9,12 +9,15 @@ import {
   SafeAreaView,
   View,
 } from "react-native";
+const { startListeningDb } = require("../api/dbListener");
+
 import resetPass from "../functions/resetPass";
 import apiUrl from "../constants/apiURL";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { Modal, Text, Input, Button } from "native-base";
 import validator from "validator";
 import verifyPass from "../functions/verifyPass";
+import getUserInfo from "../functions/getUserInfo";
 const LoginPage = ({ navigation }) => {
   const [showModal, setShowModal] = useState(false);
   const [showModal2, setShowModal2] = useState(false);
@@ -30,6 +33,7 @@ const LoginPage = ({ navigation }) => {
      */
     try {
       await AsyncStorage.setItem("private_token", token);
+
       console.log(token);
     } catch (error) {
       console.log(error);
@@ -46,6 +50,14 @@ const LoginPage = ({ navigation }) => {
    */
 
   const tryLogin = async () => {
+    if (email.length === 0) {
+      alert("Empty email field");
+      return;
+    }
+    if (password.length === 0) {
+      alert("Empty password field");
+      return;
+    }
     if (validator.isEmail(email)) {
       const response = await fetch(apiUrl + "/api/v1/user/signin", {
         method: "POST",
@@ -65,6 +77,8 @@ const LoginPage = ({ navigation }) => {
 
       const responseJSON = await response.json();
       storeToken(responseJSON.access_token);
+      const userData = await getUserInfo();
+      startListeningDb(userData.id, false);
       navigation.navigate("TabStack");
     } else {
       alert("You have entered invalid email. Try again!");

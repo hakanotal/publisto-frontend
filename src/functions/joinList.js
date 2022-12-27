@@ -15,5 +15,4 @@ export default joinList = async (list_id) => {
   if (response.status !== 400) {
     console.log("Error: " + response.status);
   }
-  console.log(response);
 };

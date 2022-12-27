@@ -10,7 +10,7 @@ import { useFonts } from "expo-font";
 import ProfilePage from "./src/pages/ProfilePage";
 import React, { useState, useEffect } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-
+const { startListeningDb } = require("./src/api/dbListener");
 const Stack = createNativeStackNavigator();
 
 // /* cetini18 entered the */
@@ -25,6 +25,11 @@ export default function App() {
     (async function () {
       const token = await AsyncStorage.getItem("private_token");
       setAuth(token);
+      if (!token) {
+        return;
+      }
+      const userData = await getUserInfo();
+      startListeningDb(userData.id, false);
     })();
   }, []);
 
