@@ -15,7 +15,8 @@ export default createList = async (list_name, items) => {
       items: [],
     }),
   });
+  const data = await response.json();
   if (response.status !== 200) {
-    console.log("Error: " + response.status);
-  } else [console.log("List created")];
+    alert("List could not be created!");
+  } else [alert("List created successfully!")];
 };

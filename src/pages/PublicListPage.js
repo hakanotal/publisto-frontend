@@ -19,7 +19,6 @@ import {
 } from "native-base";
 
 const ListsPage = (props) => {
-  console.log(props);
   const { navigation } = props;
   // Define state variables
   const [publicData, setPublicData] = useState([]);

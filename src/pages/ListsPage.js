@@ -20,16 +20,12 @@ import {
 } from "native-base";
 
 const ListsPage = (props) => {
-  console.log(props);
-  console.log(props.route.params);
   const { navigation } = props;
   // Define state variables
   const [privateData, setPrivateData] = useState([]);
   const [isLoading, setLoading] = useState(true);
   const [listName, setListName] = useState("");
   const [showModal, setShowModal] = useState(false);
-  const [isFirst, setIsFirst] = useState(true);
-  const [isListDeleted, setIsListDeleted] = useState(false);
 
   const shortenLongWords = (name) => {
     if (name.length > 15) {
@@ -49,22 +45,10 @@ const ListsPage = (props) => {
       }
       const privateData = await fetchLists("private");
       const sortedPrivateData = await compare_func(privateData);
-      // When privateData is updated, sort it and update state
-      // Only update when items first rendered
 
       setPrivateData(sortedPrivateData);
       setLoading(false);
     })();
-  }, []);
-  // @nitec427 rendering when lists are deleted does not work
-  useEffect(() => {
-    (async function () {
-      const privateData = await fetchLists("private");
-      const sortedPrivateData = await compare_func(privateData);
-
-      setPrivateData(sortedPrivateData);
-      setLoading(false);
-    });
   }, [isFocused]);
   const renderList = ({ item }) => (
     <Box

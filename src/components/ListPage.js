@@ -47,8 +47,8 @@ function ListPage(props) {
   const { listName, listId, listUser } = route.params;
   let listActive, listPublic;
   const handleListDelete = async () => {
-    await deleteList(listId);
-    navigation.navigate("TabStack", { isDeleted: true });
+    await deleteList(listId, listName, updatedItems, listPublic);
+    navigation.navigate("TabStack");
   };
   const handleQuitList = async () => {
     await quit_list(listId);
@@ -569,7 +569,7 @@ function ListPage(props) {
                 <Spacer />
               </Flex>
             )}
-            keyExtractor={(item, index) => `basicListEntry-${item.name}`}
+            keyExtractor={(item, index) => `basicListEntry-${item.name}{index}`}
           />
         )}
         {/* Save changes and return */}
