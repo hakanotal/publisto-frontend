@@ -42,7 +42,7 @@ const ListsPage = (props) => {
         setIsFirst(false);
       }
     })();
-  }, []);
+  }, [isFocused]);
   const shortenLongWords = (name) => {
     if (name.length > 15) {
       return name.substring(0, 15) + "...";
