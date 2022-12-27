@@ -33,8 +33,6 @@ const LoginPage = ({ navigation }) => {
      */
     try {
       await AsyncStorage.setItem("private_token", token);
-
-      console.log(token);
     } catch (error) {
       console.log(error);
     }
@@ -108,10 +106,13 @@ const LoginPage = ({ navigation }) => {
               colorScheme="purple"
               onPress={() => {
                 (async function () {
-                  await resetPass(updateEmail);
+                  const is_valid = await resetPass(updateEmail);
+                  if (is_valid) {
+                    setShowModal2(true);
+                    alert("An email has been sent to you!");
+                  }
+                  setShowModal(false);
                 })();
-                setShowModal(false);
-                setShowModal2(true);
               }}
             >
               Send me an email

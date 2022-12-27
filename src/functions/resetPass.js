@@ -10,6 +10,11 @@ export default resetPass = async (mail) => {
     }),
   });
   if (response.status !== 200) {
-    alert("Can not send email!");
-  } else [alert("An email has been sent to you!")];
+    alert(
+      "Can not send email! Either your email not found or you are not registered!"
+    );
+    return false;
+  } else {
+    return true;
+  }
 };

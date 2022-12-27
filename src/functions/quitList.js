@@ -2,7 +2,6 @@ import getToken from "./getToken";
 import apiUrl from "../constants/apiURL";
 export default quitList = async (id) => {
   const token = await getToken();
-  console.log("Quit List");
   const response = await fetch(apiUrl + "/api/v1/list/leave", {
     method: "DELETE",
     headers: {

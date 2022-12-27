@@ -106,12 +106,27 @@ function ListPage(props) {
     setShowModal(true);
   };
   const handleBuy = (item) => {
-    const index = updatedItems.findIndex((e) => e.name === item.name);
-    const my_items = [
-      ...updatedItems.slice(0, index),
-      { ...updatedItems[index], bought_by: userName },
-      ...updatedItems.slice(index + 1),
-    ];
+    // If the item is bought combine
+    const find_index = purchased.findIndex((e) => e.name === item.name);
+    let my_items;
+    if (find_index != -1) {
+      /* Remove item from updatedItems */
+      const index = updatedItems.findIndex(
+        (e) => e.name === item.name && e.bought_by == null
+      );
+      my_items = [
+        ...updatedItems.slice(0, index),
+        ...updatedItems.slice(index + 1),
+      ];
+    } else {
+      const index = updatedItems.findIndex((e) => e.name === item.name);
+      my_items = [
+        ...updatedItems.slice(0, index),
+        { ...updatedItems[index], bought_by: userName },
+        ...updatedItems.slice(index + 1),
+      ];
+    }
+
     setUpdatedItems(my_items);
   };
   function containsNumber(str) {
