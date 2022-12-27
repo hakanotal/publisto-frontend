@@ -26,6 +26,7 @@ const getUserInfo = async () => {
 };
 
 
+
 export default ProfilePage = ({ navigation }) => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -46,6 +47,67 @@ export default ProfilePage = ({ navigation }) => {
     } catch (error) {
       console.log(error);
     }
+  }
+  const validateEmail = (email) => {
+    return String(email)
+      .toLowerCase()
+      .match(
+        /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+      );
+  }
+
+ 
+  
+  const checkInputs = () => {
+    if (newname == "" && newemail == "") {
+      alert("Please enter a new name or email");
+      return false;
+    }
+    if (newname != "" && newname.length < 3) {
+      alert("Name must be at least 3 characters");
+      return false;
+    }
+    if (newemail != "" && !validateEmail(newemail)) {
+      alert("Please enter a valid email");
+      return false;
+    }
+    if (password == "") {
+        alert("Please enter your current password");
+        return false;
+      }
+
+    return true;
+
+  }
+
+  const handleUpdate = async () => {
+    if (!checkInputs()) {
+      return;
+    }
+    if (newname == "") {
+      setNewName(name);
+    }
+    if (newemail == "") {
+      setNewEmail(email);
+    }
+    (async function () {
+      response = await updateUserInfo(newname, newemail, password, password);
+      if (response && response.access_token) {
+        storeToken(response.access_token);
+        setShowModal(false);
+        setEditProfile(false);
+        setName(newname);
+        setEmail(newemail);
+        setNewEmail("");
+        setNewName("");
+        setPassword("");
+        alert("Profile updated successfully");
+      }
+      else {
+        alert("Password is incorrect. Please try again.");
+      }
+
+    })();
   }
   // useEffect run when the page is first loaded
   useEffect(() => {
@@ -97,7 +159,7 @@ export default ProfilePage = ({ navigation }) => {
           borderWidth: 1,
           borderColor: "purple",
           borderRadius: 100,
-          marginBottom: 40,
+          marginBottom: 20,
           marginTop: 20,
         }}
         source={{ uri: `data:image/png;base64,${image}` }}
@@ -110,45 +172,16 @@ export default ProfilePage = ({ navigation }) => {
           <Input placeholder="Enter name" mt="1" onChangeText={(text) => setNewName(text)} />
           <FormControl.Label isRequired mt="6">Current Password</FormControl.Label>
           <Input type="password"  placeholder="Password" onChangeText={(text) => setPassword(text)} />
-          <Box bg={"purple.900"} mt="5" ml="10"  h={50} rounded="md" w={200}>
+          
+          <Box bg={"purple.900"} mt="7" ml="10"  h={42} rounded="md" w={200}>
           <Button
-          variant="ghost"
-            onPress={() => {
-              console.log("dsadasd")
-              
-              if (newname == "") {
-                setNewName(name);
-              }
-              if (newemail == "") {
-                setNewEmail(email);
-              }
-            
-              (async function () {
-                console.log(newname)
-                console.log(newemail)
-                console.log(password)
-                console.log(newPassword)
-                response = await updateUserInfo(newname, newemail, password, password);
-                storeToken(response.access_token);
-              if(response)
-              {
-                setName(newname);
-                setEmail(newemail);
-                setEditProfile(false);
-
-              }
-              else{
-                alert("Wrong password")
-              }
-              })();
-            }}
-          >
+          variant="ghost" onPress={handleUpdate}>
             <Text color="white" fontSize="15">
             Save Changes
             </Text>
           </Button>
           </Box>
-          <Box bg={"purple.900"} mt="5" ml="10"  h={50} rounded="md" w={200}>
+          <Box bg={"purple.900"} mt="5" ml="10"  h={42} rounded="md" w={200}>
           <Button
           variant="ghost"
             onPress={() => setEditProfile(false)}
@@ -202,12 +235,15 @@ export default ProfilePage = ({ navigation }) => {
                   fontWeight: "bold",
                 }}
                 onPress={async () => {
-                  navigation.navigate("Signin");
                   try {
                     await AsyncStorage.clear();
                   } catch (error) {
                     console.log(error);
                   }
+                  navigation.reset({
+                    index: 0,
+                    routes: [{name: 'Signin'}],
+                  });
                 }}
               >
                 Sign Out
