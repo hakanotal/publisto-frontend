@@ -19,7 +19,12 @@ export default updateUserInfo = async (
       oldPassword: oldPassword,
       newPassword: newPassword,
     }),
-  });
-  response = await response.json();
-  return response;
+  })
+  .then((response) => response.json())
+  .then((json) => {
+    return json;
+  })
+  .catch((error) => console.error(error));
+
+return response;
 };
