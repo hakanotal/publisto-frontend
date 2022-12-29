@@ -312,10 +312,26 @@ function ListPage(props) {
             />
           </Modal.Body>
           <Modal.Footer bg="gray.500">
-            <Button flex="1" onPress={submitEdit}>
-              Save Item
-            </Button>
-            <Button>Close without saving</Button>
+            <Box bg={"purple.900"} flex={1} h={42} right="2">
+              <Button
+                variant="ghost"
+                onPress={submitEdit}
+                _text={{ color: "white", fontsize: "12"}}
+              >
+                Save Item
+              </Button>
+            </Box>
+
+            <Box bg={"purple.900"} flex={1} h={42}>
+              <Button
+                variant="ghost"
+                onPress={() => setShowModal(false)}
+                _text={{ color: "white",fontSize: "12" }}
+              >
+                Close Without Saving
+              </Button>
+            </Box>
+                
           </Modal.Footer>
         </Modal.Content>
       </Modal>

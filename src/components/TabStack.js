@@ -4,12 +4,14 @@ import ProfilePage from "../pages/ProfilePage";
 import ListsPage from "../pages/ListsPage";
 import PublicListPage from "../pages/PublicListPage";
 import { Ionicons, FontAwesome } from "@expo/vector-icons";
-import { StyleSheet } from "react-native";
+import { StyleSheet,View } from "react-native";
+
 
 const Tab = createBottomTabNavigator();
 
 const TabStack = ({ route, navigation }) => {
   return (
+    <View style={styles.container}>
     <Tab.Navigator
       screenOptions={{
         headerShown: false,
@@ -49,6 +51,7 @@ const TabStack = ({ route, navigation }) => {
         }}
       />
     </Tab.Navigator>
+    </View>
   );
 };
 

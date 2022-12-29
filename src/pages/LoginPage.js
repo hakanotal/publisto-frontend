@@ -18,7 +18,7 @@ import { Modal, Text, Input, Button } from "native-base";
 import validator from "validator";
 import verifyPass from "../functions/verifyPass";
 import getUserInfo from "../functions/getUserInfo";
-const LoginPage = ({ navigation }) => {
+const LoginPage = ({ navigation ,NotificationUpdate}) => {
   const [showModal, setShowModal] = useState(false);
   const [showModal2, setShowModal2] = useState(false);
   const [updateEmail, setUpdateEmail] = useState("");
@@ -78,6 +78,7 @@ const LoginPage = ({ navigation }) => {
       const userData = await getUserInfo();
       startListeningDb(userData.id, false);
       navigation.navigate("TabStack");
+      NotificationUpdate();
     } else {
       alert("You have entered invalid email. Try again!");
     }

@@ -7,6 +7,7 @@ import fetchLists from "../functions/fetchLists";
 import createList from "../functions/createList";
 import { useIsFocused } from "@react-navigation/native";
 import compare_func from "../functions/compare_func";
+const { Notification } = require("../api/dbListener");
 import {
   Box,
   Spacer,
@@ -116,6 +117,7 @@ const ListsPage = (props) => {
           </Modal.Footer>
         </Modal.Content>
       </Modal>
+      
       <Heading fontSize="3xl" px="8" pb="3" py={5} color="purple.900">
         PUBLISTO
       </Heading>
@@ -180,6 +182,7 @@ const ListsPage = (props) => {
           </Flex>
         )}
       </Center>
+     
     </Box>
   );
 };

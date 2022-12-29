@@ -17,6 +17,7 @@ import {
   Text,
   Input,
 } from "native-base";
+const { Notification } = require("../api/dbListener");
 
 const ListsPage = (props) => {
   const { navigation } = props;

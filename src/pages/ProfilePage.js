@@ -4,6 +4,8 @@ import takeRecommendation from "../functions/takeRecommendation";
 import getToken from "../functions/getToken";
 import apiUrl from "../constants/apiURL";
 import { Image } from "react-native";
+const { Notification } = require("../api/dbListener");
+
 import {
   Box,
   Button,
@@ -40,7 +42,10 @@ const getUserInfo = async () => {
   return data;
 };
 
+
+
 export default ProfilePage = ({ navigation }) => {
+
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [id, setId] = useState("");
@@ -145,7 +150,7 @@ export default ProfilePage = ({ navigation }) => {
       }
     })();
   };
-
+  
   const changePasswordHandler = async () => {
     if(validatePassword(newPassword) == false){
       alert("Password must be at least 8 characters and contain at least one letter and one number");
@@ -202,6 +207,8 @@ export default ProfilePage = ({ navigation }) => {
   
   }, []);
   
+  
+
  const handleRecommendation = async () => {
   setShowModalRec(true);
   console.log(recipes["0"])
@@ -514,7 +521,7 @@ export default ProfilePage = ({ navigation }) => {
             </FormControl>
           </View>
         </KeyboardAwareScrollView>
-                )}
+      )}
     </Box>
   );
 };
