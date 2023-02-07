@@ -1,6 +1,6 @@
 import getToken from "./getToken";
 import apiUrl from "../constants/apiURL";
-export default deleteList = async (id) => {
+export default quitList = async (id) => {
   const token = await getToken();
   const response = await fetch(apiUrl + "/api/v1/list/leave", {
     method: "DELETE",
@@ -16,4 +16,3 @@ export default deleteList = async (id) => {
     console.log("Error: " + response.status);
   }
 };
-

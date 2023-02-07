@@ -1,5 +1,5 @@
 import { StatusBar } from "expo-status-bar";
-// const { startListeningDb } = require("../api/dbListener");
+const { startListeningDb } = require("../api/dbListener");
 import React, { useState, useEffect } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { FlatList } from "react-native";
@@ -7,6 +7,7 @@ import fetchLists from "../functions/fetchLists";
 import createList from "../functions/createList";
 import { useIsFocused } from "@react-navigation/native";
 import compare_func from "../functions/compare_func";
+const { Notification } = require("../api/dbListener");
 import {
   Box,
   Spacer,
@@ -18,6 +19,7 @@ import {
   Text,
   Input,
 } from "native-base";
+import getUserInfo from "../functions/getUserInfo";
 
 const ListsPage = (props) => {
   const { navigation } = props;
@@ -45,6 +47,7 @@ const ListsPage = (props) => {
       }
       const privateData = await fetchLists("private");
       const sortedPrivateData = await compare_func(privateData);
+      const data = await getUserInfo();
 
       setPrivateData(sortedPrivateData);
       setLoading(false);
@@ -114,6 +117,7 @@ const ListsPage = (props) => {
           </Modal.Footer>
         </Modal.Content>
       </Modal>
+      
       <Heading fontSize="3xl" px="8" pb="3" py={5} color="purple.900">
         PUBLISTO
       </Heading>
@@ -178,6 +182,7 @@ const ListsPage = (props) => {
           </Flex>
         )}
       </Center>
+     
     </Box>
   );
 };

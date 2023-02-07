@@ -1,7 +1,6 @@
 const cloud_url =
   "https://eurmpfph3wu5w7rmksrgt46b5q0prnws.lambda-url.eu-central-1.on.aws";
 
-  
 const tryLogin = async () => {
   /*
    *   Try to login with the given credentials
@@ -20,7 +19,6 @@ const tryLogin = async () => {
     })
       .then((response) => response.json())
       .then((json) => {
-        //console.log(json.access_token)
         storeToken(json.access_token);
         navigation.navigate("TabStack");
       })

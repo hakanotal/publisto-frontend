@@ -17,6 +17,7 @@ import {
   Text,
   Input,
 } from "native-base";
+const { Notification } = require("../api/dbListener");
 
 const ListsPage = (props) => {
   const { navigation } = props;
@@ -30,19 +31,17 @@ const ListsPage = (props) => {
   // Fetch lists from database in first render and
   useEffect(() => {
     (async function () {
-      if (isFocused) {
-        const publicData = await fetchLists("public");
-        setPublicData(publicData);
-        setLoading(false);
-      }
+      const publicData = await fetchLists("public");
       const sortedPublicData = await compare_func(publicData);
+      setPublicData(publicData);
+      setLoading(false);
       if (isFirst) {
         setPublicData(sortedPublicData);
         setLoading(false);
         setIsFirst(false);
       }
     })();
-  }, []);
+  }, [isFocused]);
   const shortenLongWords = (name) => {
     if (name.length > 15) {
       return name.substring(0, 15) + "...";
@@ -103,17 +102,16 @@ const ListsPage = (props) => {
               flex="1"
               colorScheme="purple"
               onPress={() => {
-                console.log(newListId);
-                joinList(newListId);
                 (async function () {
+                  await joinList(newListId);
                   const publicData = await fetchLists("public");
                   const sortedData = await compare_func(publicData);
-                  setpublicData(sortedData);
+                  setPublicData(sortedData);
                 })();
                 setShowModal(false);
               }}
             >
-              Create Public List
+              Join List
             </Button>
           </Modal.Footer>
         </Modal.Content>

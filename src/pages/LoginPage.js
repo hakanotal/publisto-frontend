@@ -3,18 +3,28 @@ import React, { useState, useRef, Component } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import {
   StyleSheet,
-  Text,
   Image,
   TextInput,
   TouchableOpacity,
   SafeAreaView,
   View,
 } from "react-native";
+const { startListeningDb } = require("../api/dbListener");
+
+import resetPass from "../functions/resetPass";
 import apiUrl from "../constants/apiURL";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
-
+import { Modal, Text, Input, Button } from "native-base";
 import validator from "validator";
-const LoginPage = ({ navigation }) => {
+import verifyPass from "../functions/verifyPass";
+import getUserInfo from "../functions/getUserInfo";
+const LoginPage = ({ navigation ,NotificationUpdate}) => {
+  const [showModal, setShowModal] = useState(false);
+  const [showModal2, setShowModal2] = useState(false);
+  const [updateEmail, setUpdateEmail] = useState("");
+  const [updatePassword, setUpdatePassword] = useState("");
+  const [updatePassword2, setUpdatePassword2] = useState("");
+  const [updateCode, setUpdateCode] = useState("");
   const ref_input2 = useRef();
   const ref_login = useRef();
   const storeToken = async (token) => {
@@ -23,7 +33,6 @@ const LoginPage = ({ navigation }) => {
      */
     try {
       await AsyncStorage.setItem("private_token", token);
-      console.log(token);
     } catch (error) {
       console.log(error);
     }
@@ -39,6 +48,14 @@ const LoginPage = ({ navigation }) => {
    */
 
   const tryLogin = async () => {
+    if (email.length === 0) {
+      alert("Empty email field");
+      return;
+    }
+    if (password.length === 0) {
+      alert("Empty password field");
+      return;
+    }
     if (validator.isEmail(email)) {
       const response = await fetch(apiUrl + "/api/v1/user/signin", {
         method: "POST",
@@ -58,13 +75,115 @@ const LoginPage = ({ navigation }) => {
 
       const responseJSON = await response.json();
       storeToken(responseJSON.access_token);
+      const userData = await getUserInfo();
+      startListeningDb(userData.id, false);
       navigation.navigate("TabStack");
+      NotificationUpdate();
     } else {
       alert("You have entered invalid email. Try again!");
     }
   };
   return (
     <View style={styles.container}>
+      <Modal isOpen={showModal} onClose={() => setShowModal(false)} size="lg">
+        <Modal.Content maxWidth="350" bg="muted.200" h="56" rounded="2xl">
+          <Modal.Header
+            bg="muted.200"
+            _text={{ color: "bluegray", textAlign: "center" }}
+          >
+            Enter Your E-mail
+          </Modal.Header>
+          <Modal.Body bg="muted.200">
+            <Input
+              variant="outline"
+              placeholder="example@mail.com"
+              color="black"
+              onChangeText={(email) => setUpdateEmail(email)}
+            />
+          </Modal.Body>
+          <Modal.Footer bg="muted.200">
+            <Button
+              flex="1"
+              colorScheme="purple"
+              onPress={() => {
+                (async function () {
+                  const is_valid = await resetPass(updateEmail);
+                  if (is_valid) {
+                    setShowModal2(true);
+                    alert("An email has been sent to you!");
+                  }
+                  setShowModal(false);
+                })();
+              }}
+            >
+              Send me an email
+            </Button>
+          </Modal.Footer>
+        </Modal.Content>
+      </Modal>
+      <Modal isOpen={showModal2} onClose={() => setShowModal2(false)} size="lg">
+        <Modal.Content maxWidth="350" bg="muted.200" h="96" rounded="2xl">
+          <Modal.Header
+            bg="muted.200"
+            _text={{ color: "bluegray", textAlign: "center" }}
+          >
+            Reset Your password
+          </Modal.Header>
+          <Modal.Body bg="muted.200">
+            <Text ml="3">New Password:</Text>
+
+            <Input
+              mb="2"
+              variant="outline"
+              placeholder="*******"
+              type="password"
+              color="black"
+              onChangeText={(password) => setUpdatePassword(password)}
+            />
+            <Text ml="3">Re-enter Password:</Text>
+            <Input
+              mb="4"
+              variant="outline"
+              placeholder="*******"
+              color="black"
+              type="password"
+              onChangeText={(password) => setUpdatePassword2(password)}
+            />
+            <Text ml="3">Code:</Text>
+
+            <Input
+              mb="4"
+              variant="outline"
+              placeholder="000000"
+              color="black"
+              onChangeText={(code) => setUpdateCode(code)}
+            />
+          </Modal.Body>
+          <Modal.Footer bg="muted.200">
+            <Button
+              flex="1"
+              colorScheme="purple"
+              onPress={() => {
+                // Check if two password are the same
+                // Check the code is 348956
+                if (updatePassword !== updatePassword2) {
+                  alert("The two passwords are not the same");
+                  return;
+                }
+                (async function () {
+                  await verifyPass(updateEmail, updatePassword, updateCode);
+                })();
+                // (async function () {
+                //   await resetPass(updateEmail);
+                // })();
+                setShowModal2(false);
+              }}
+            >
+              Reset My Password
+            </Button>
+          </Modal.Footer>
+        </Modal.Content>
+      </Modal>
       <KeyboardAwareScrollView
         style={{ flex: 1 }}
         extraScrollHeight={50}
@@ -103,7 +222,12 @@ const LoginPage = ({ navigation }) => {
         >
           <Text style={[styles.whiteText]}>Sign In</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.forgot_button}>
+        <TouchableOpacity
+          style={styles.forgot_button}
+          onPress={() => {
+            setShowModal(true);
+          }}
+        >
           <Text style={[styles.colorPurple, styles.mt]}>Forgot Password?</Text>
         </TouchableOpacity>
         <TouchableOpacity

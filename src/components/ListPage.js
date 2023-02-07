@@ -19,8 +19,8 @@ import { AntDesign, Feather } from "@expo/vector-icons";
 import deleteList from "../functions/deleteList";
 import updateList from "../functions/updateList";
 import fetchUserInfo from "../functions/fetchUserInfo";
-import fetchItems from "../functions/fetchItems";
-import quit_list from "../functions/quitList";
+import fetchLists from "../functions/fetchItems";
+import quitList from "../functions/quitList";
 
 function ListPage(props) {
   const { route, navigation } = props;
@@ -41,17 +41,18 @@ function ListPage(props) {
   const [userName, setuserName] = useState("");
   const [updatedItems, setUpdatedItems] = useState([]);
   const [isFirst, setIsFirst] = useState(true);
+  const [listPublic, setListPublic] = useState(false);
+  const [listActive, setListActive] = useState(false);
   const capitalizeFirstLetter = (string) => {
     return string.charAt(0).toUpperCase() + string.slice(1);
   };
   const { listName, listId, listUser } = route.params;
-  let listActive, listPublic;
   const handleListDelete = async () => {
     await deleteList(listId, listName, updatedItems, listPublic);
     navigation.navigate("TabStack");
   };
   const handleQuitList = async () => {
-    await quit_list(listId);
+    await quitList(listId);
     navigation.navigate("TabStack");
   };
 
@@ -77,7 +78,7 @@ function ListPage(props) {
     setUpdatedItems(my_items);
   };
   const handleReturn = async () => {
-    await updateList(listId, listName, updatedItems, listActive, listPublic);
+    await updateList(listId, listName, updatedItems, listPublic);
     navigation.navigate("TabStack");
   };
   const submitEdit = async () => {
@@ -105,12 +106,27 @@ function ListPage(props) {
     setShowModal(true);
   };
   const handleBuy = (item) => {
-    const index = updatedItems.findIndex((e) => e.name === item.name);
-    const my_items = [
-      ...updatedItems.slice(0, index),
-      { ...updatedItems[index], bought_by: userName },
-      ...updatedItems.slice(index + 1),
-    ];
+    // If the item is bought combine
+    const find_index = purchased.findIndex((e) => e.name === item.name);
+    let my_items;
+    if (find_index != -1) {
+      /* Remove item from updatedItems */
+      const index = updatedItems.findIndex(
+        (e) => e.name === item.name && e.bought_by == null
+      );
+      my_items = [
+        ...updatedItems.slice(0, index),
+        ...updatedItems.slice(index + 1),
+      ];
+    } else {
+      const index = updatedItems.findIndex((e) => e.name === item.name);
+      my_items = [
+        ...updatedItems.slice(0, index),
+        { ...updatedItems[index], bought_by: userName },
+        ...updatedItems.slice(index + 1),
+      ];
+    }
+
     setUpdatedItems(my_items);
   };
   function containsNumber(str) {
@@ -160,9 +176,9 @@ function ListPage(props) {
   useEffect(() => {
     (async () => {
       if (isFirst) {
-        listItems = await fetchItems(listId);
-        listActive = listItems.is_active;
-        listPublic = listItems.is_public;
+        const listItems = await fetchLists(listId);
+        setListActive(listItems.is_active);
+        setListPublic(listItems.is_public);
         setUpdatedItems(listItems.items);
         setLoading(false);
         updatedItems.forEach((item) => {
@@ -296,10 +312,26 @@ function ListPage(props) {
             />
           </Modal.Body>
           <Modal.Footer bg="gray.500">
-            <Button flex="1" onPress={submitEdit}>
-              Save Item
-            </Button>
-            <Button>Close without saving</Button>
+            <Box bg={"purple.900"} flex={1} h={42} right="2">
+              <Button
+                variant="ghost"
+                onPress={submitEdit}
+                _text={{ color: "white", fontsize: "12"}}
+              >
+                Save Item
+              </Button>
+            </Box>
+
+            <Box bg={"purple.900"} flex={1} h={42}>
+              <Button
+                variant="ghost"
+                onPress={() => setShowModal(false)}
+                _text={{ color: "white",fontSize: "12" }}
+              >
+                Close Without Saving
+              </Button>
+            </Box>
+                
           </Modal.Footer>
         </Modal.Content>
       </Modal>
@@ -472,7 +504,11 @@ function ListPage(props) {
               h="12"
               w="12"
             >
-              <Feather name="trash" size={20} color="white" />
+              {userId != listUser ? (
+                <Feather name="log-out" size={20} color="white" />
+              ) : (
+                <Feather name="trash" size={20} color="white" />
+              )}
             </Button>
           </Box>
         </Flex>

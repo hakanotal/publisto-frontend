@@ -13,17 +13,33 @@ import {
   KeyboardAvoidingView,
 } from "react-native";
 import apiUrl from "../constants/apiURL";
-import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
-
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+import validator from "validator";
 const SignUpPage = ({ navigation }) => {
-  function isValidEmail(email) {
-    return /\S+@\S+\.\S+/.test(email);
+  function isValidPass(password) {
+    return /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/.test(password);
   }
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const trySignUp = async () => {
-    if (isValidEmail(email)) {
+    if (name.length === 0) {
+      alert("Empty name field");
+      return;
+    }
+    // Copilot write me a name checker that gives alert if name start with number or contains only numbers
+
+    if (validator.isNumeric(name)) {
+      alert("Name must contain at least 1 letter");
+      return;
+    }
+    if (!isValidPass(password)) {
+      alert(
+        "Password must contain at least 1 letter and 1 number also at least 8 characters"
+      );
+      return;
+    }
+    if (validator.isEmail(email)) {
       let response = await fetch(apiUrl + "/api/v1/user/signup", {
         method: "POST",
         headers: {
@@ -36,12 +52,15 @@ const SignUpPage = ({ navigation }) => {
           password: password,
         }),
       })
-        .then((response) => response.json())
+        .then((response) => {
+          if (response.status != 200) throw new Error("User already exists");
+          response.json();
+        })
         .then((json) => {
           alert("User created successfully");
           navigation.navigate("Signin");
         })
-        .catch((error) => console.error(error));
+        .catch((error) => alert(error));
 
       return response;
     } else {
@@ -50,54 +69,54 @@ const SignUpPage = ({ navigation }) => {
   };
 
   return (
-    
     <SafeAreaView style={styles.container}>
-    <KeyboardAwareScrollView
-    style={ { flex: 1 } }
-    extraScrollHeight={ 50 }
-    keyboardShouldPersistTaps='handled'
-    contentContainerStyle={ { width: 400 ,height:700 } } >
-      
-      <Image
-        source={require("../../assets/images/icon.png")}
-        style={styles.image}
-      />
-      <StatusBar style="auto" />
-      <Text style={styles.text}>Name</Text>
-      <SafeAreaView style={styles.inputView}>
-        <TextInput
-          style={styles.TextInput}
-          onChangeText={(name) => setName(name)}
+      <KeyboardAwareScrollView
+        style={{ flex: 1 }}
+        extraScrollHeight={50}
+        keyboardShouldPersistTaps="handled"
+        contentContainerStyle={{ width: 400, height: 700 }}
+      >
+        <Image
+          source={require("../../assets/images/icon.png")}
+          style={styles.image}
         />
-      </SafeAreaView>
-      <Text style={styles.text}>E-mail</Text>
-      <SafeAreaView style={styles.inputView}>
-        <TextInput
-          style={styles.TextInput}
-          onChangeText={(email) => setEmail(email)}
-        />
-      </SafeAreaView>
-      <Text style={styles.text}>Password</Text>
-      <SafeAreaView style={styles.inputView}>
-        <TextInput
-          style={styles.TextInput}
-          secureTextEntry={true}
-          onChangeText={(password) => setPassword(password)}
-        />
-      </SafeAreaView>
+        <StatusBar style="auto" />
+        <Text style={styles.text}>Name</Text>
+        <SafeAreaView style={styles.inputView}>
+          <TextInput
+            style={styles.TextInput}
+            onChangeText={(name) => setName(name)}
+          />
+        </SafeAreaView>
+        <Text style={styles.text}>E-mail</Text>
+        <SafeAreaView style={styles.inputView}>
+          <TextInput
+            style={styles.TextInput}
+            onChangeText={(email) => setEmail(email)}
+          />
+        </SafeAreaView>
+        <Text style={styles.text}>Password</Text>
+        <SafeAreaView style={styles.inputView}>
+          <TextInput
+            style={styles.TextInput}
+            secureTextEntry={true}
+            onChangeText={(password) => setPassword(password)}
+          />
+        </SafeAreaView>
 
-      <TouchableOpacity style={styles.loginBtn} onPress={trySignUp}>
-        <Text style={{ color: "#FFFFFF" }}>Sign Up</Text>
-      </TouchableOpacity>
-
-      <TouchableOpacity style={styles.forgot_button}>
-        <Text style={{ color: "#7F7E7E" }}>Forgot Password?</Text>
-      </TouchableOpacity>
+        <TouchableOpacity style={styles.loginBtn} onPress={trySignUp}>
+          <Text style={{ color: "#FFFFFF" }}>Sign Up</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.forgot_button}
+          onPress={() => {
+            navigation.navigate("Signin");
+          }}
+        >
+          <Text style={{ color: "#777" }}>Do you have an account? Login.</Text>
+        </TouchableOpacity>
       </KeyboardAwareScrollView>
-
     </SafeAreaView>
-
-
   );
 };
 
